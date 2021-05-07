@@ -3,27 +3,28 @@
     <v-app-bar color="#5b25f5" dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
-      <h2 @click="$router.push('/dashbord')" class="title-groupomania">
-        Groupomania
+      <h2>
+        <router-link to="/"> Groupomania </router-link>
       </h2>
+
       <v-spacer> </v-spacer>
-      <span class="connexion" title="click to login">
-        <v-icon>mdi-account-arrow-right-outline</v-icon>
-        Connexion
-      </span>
+      <router-link to="/login">
+        <span class="connexion" title="click to login">
+          <v-icon>mdi-account-arrow-right-outline</v-icon>
+          Connexion
+        </span>
+      </router-link>
       <span class="connexion" title="click to register">
-        <v-icon>mdi-circle-edit-outline</v-icon>
-        
-        Inscription
+        <router-link to="/register">
+          <v-icon>mdi-circle-edit-outline</v-icon>
+          Inscription
+        </router-link>
       </span>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" absolute temporary>
       <v-list nav dense>
-        <v-list-item-group
-         
-          active-class="deep-purple--text text--accent-4"
-        >
+        <v-list-item-group active-class="deep-purple--text text--accent-4">
           <v-list-item>
             <v-list-item-icon>
               <v-icon>mdi-view-dashboard</v-icon>
@@ -38,7 +39,6 @@
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-
 
           <v-list-item>
             <v-list-item-icon>
@@ -70,26 +70,28 @@ export default {
 };
 </script>
 <style scoped>
-.title-groupomania{
-  cursor:pointer;
+a {
+  color: white !important;
+  text-decoration: none;
+}
+.title-groupomania {
+  cursor: pointer;
   margin-left: 60px;
-
 }
-.connexion{
+.connexion {
   font-weight: bold;
-  font-size:0.7em;
-  cursor:pointer
+  font-size: 0.7em;
+  cursor: pointer;
 }
-.connexion:hover{
+.connexion:hover {
   opacity: 0.5;
 }
-.connexion:first-of-type{
+.connexion:first-of-type {
   margin-right: 5px;
 }
-@media (max-width:576px){
-  .title-groupomania{
-    display:none
+@media (max-width: 576px) {
+  .title-groupomania {
+    display: none;
   }
-
 }
 </style>

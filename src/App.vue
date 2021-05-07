@@ -2,9 +2,7 @@
   <v-app id="app">
     <AppNavBar />
     <v-main>
-      <v-container>
-        <router-view />
-      </v-container>
+      <router-view />
     </v-main>
 
     <AppFooter />
@@ -27,8 +25,8 @@ export default {
 };
 </script>
 <style scoped>
-#app{
-    -webkit-user-select: none; /* Safari */
+#app {
+  -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
 }
