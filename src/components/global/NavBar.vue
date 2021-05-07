@@ -1,0 +1,95 @@
+<template>
+  <div>
+    <v-app-bar color="#5b25f5" dark>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-spacer></v-spacer>
+      <h2 @click="$router.push('/dashbord')" class="title-groupomania">
+        Groupomania
+      </h2>
+      <v-spacer> </v-spacer>
+      <span class="connexion" title="click to login">
+        <v-icon>mdi-account-arrow-right-outline</v-icon>
+        Connexion
+      </span>
+      <span class="connexion" title="click to register">
+        <v-icon>mdi-circle-edit-outline</v-icon>
+        
+        Inscription
+      </span>
+    </v-app-bar>
+
+    <v-navigation-drawer v-model="drawer" absolute temporary>
+      <v-list nav dense>
+        <v-list-item-group
+         
+          active-class="deep-purple--text text--accent-4"
+        >
+          <v-list-item>
+            <v-list-item-icon>
+              <v-icon>mdi-view-dashboard</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title
+                @click="$router.push('/dashbord')"
+                class="nav-item"
+              >
+                Tableau de bord
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+
+          <v-list-item>
+            <v-list-item-icon>
+              <v-icon> mdi-wrench</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title
+                @click="$router.push('/parametre')"
+                class="nav-item"
+              >
+                Paramétres
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-navigation-drawer>
+  </div>
+</template>
+<script>
+export default {
+  name: "AppNav",
+  data() {
+    return {
+      drawer: false,
+    };
+  },
+};
+</script>
+<style scoped>
+.title-groupomania{
+  cursor:pointer;
+  margin-left: 60px;
+
+}
+.connexion{
+  font-weight: bold;
+  font-size:0.7em;
+  cursor:pointer
+}
+.connexion:hover{
+  opacity: 0.5;
+}
+.connexion:first-of-type{
+  margin-right: 5px;
+}
+@media (max-width:576px){
+  .title-groupomania{
+    display:none
+  }
+
+}
+</style>
