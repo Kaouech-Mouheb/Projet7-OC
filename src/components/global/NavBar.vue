@@ -4,7 +4,7 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
       <h2>
-        <router-link to="/"> Groupomania </router-link>
+        <router-link to="/" class="title-groupomania"> Groupomania </router-link>
       </h2>
 
       <v-spacer> </v-spacer>
@@ -75,8 +75,8 @@ a {
   text-decoration: none;
 }
 .title-groupomania {
-  cursor: pointer;
-  margin-left: 60px;
+ 
+  margin-left: 60px !important;
 }
 .connexion {
   font-weight: bold;
