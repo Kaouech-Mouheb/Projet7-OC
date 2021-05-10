@@ -27,7 +27,9 @@
               </div>
               <div>{{ messages.birthday }}</div>
               <div>{{ messages.email }}</div>
-              <div><v-btn>Paramétre de compte</v-btn></div>
+              <div>
+                <v-btn><v-icon>mdi-cog-off-outline </v-icon> Compte</v-btn>
+              </div>
             </div>
           </v-timeline-item>
         </v-timeline>
@@ -35,7 +37,7 @@
       <hr />
       <v-card-text>
         <p class="display-1 text--primary text-center">Mes Publications</p>
-        <AppPublication />
+        <AppPublication :profile="false" />
       </v-card-text>
     </v-card>
   </v-container>

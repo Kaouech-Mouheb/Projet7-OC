@@ -27,31 +27,26 @@
         </v-container>
       </div>
     </div>
-   <div class="bloc-publication">
+    <div class="bloc-publication">
+     
       <div class="row d-flex justify-content-center">
-      <div class="col-md-8 d-flex justify-content-center">
-        <AppCreatePublication />
+        <div class="col-md-8">
+          <AppPublication />
+        </div>
       </div>
     </div>
-    <div class="row d-flex justify-content-center">
-      <div class="col-md-8">
-        <AppPublication />
-      </div>
-    </div>
-   </div>
   </div>
 </template>
 
 <script>
 import AppPublication from "../components/publication/Publication";
 import AppSearchUsers from "../components/utils/SearchUsers";
-import AppCreatePublication from "../components/publication/Create";
 export default {
   name: "AppHome",
   components: {
     AppPublication,
     AppSearchUsers,
-    AppCreatePublication,
+   
   },
   data: () => ({
     switch1: true,
@@ -63,8 +58,8 @@ export default {
 .text-indigo {
   color: #5b25f5;
 }
-.bloc-publication{
-  margin-top:-50px
+.bloc-publication {
+  margin-top: -50px;
 }
 @media (max-width: 576px) {
   .switch-small {
@@ -73,7 +68,7 @@ export default {
   .mt-small-4 {
     margin-top: 17px;
   }
-  .bloc-publication{
+  .bloc-publication {
     margin-top: -30px;
   }
 }
