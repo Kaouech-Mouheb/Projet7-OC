@@ -1,57 +1,69 @@
 <template>
-  <v-container>
-    <v-row class="d-flex justify-center">
-      <v-col cols="12" sm="6">
-        <v-form ref="form" v-model="valid" lazy-validation>
-          <v-text-field
-            v-model="name"
-            :counter="10"
-            :rules="nameRules"
-            label="Nom"
-            prepend-icon="mdi-account"
-            required
-          ></v-text-field>
-
-          <v-text-field
-            v-model="email"
-            :rules="emailRules"
-            label="E-mail"
-            prepend-icon="mdi-gmail"
-            required
-          ></v-text-field>
-
-          <div class="d-flex">
-            <v-text-field
-              :prepend-icon="show4 ? 'mdi-eye' : 'mdi-eye-off'"
-              :type="show4 ? 'text' : 'password'"
-              @click:prepend="show4 = !show4"
-              v-model="password"
-              :rules="passwordRules"
-              label="Mot de passe"
-              required
-            >
-            </v-text-field>
+  <div class="img">
+    <v-container>
+      <div class="title-small-screen">
+        <h2 class="text-center">Groupomania</h2>
+      </div>
+      <v-row class="d-flex justify-center">
+        <v-col cols="12" sm="6" class="card">
+          <div class="text-center">
+            <h2 class="inscription">Inscription</h2>
           </div>
+          <v-form ref="form" v-model="valid" lazy-validation>
+            <v-text-field
+              v-model="name"
+              :counter="10"
+              :rules="nameRules"
+              label="Nom"
+              prepend-icon="mdi-account"
+              color="#5b25f5"
+              required
+            ></v-text-field>
 
-          <v-checkbox
-            v-model="checkbox"
-            :rules="[(v) => !!v || 'Vous devez accepter pour continuer!']"
-            label="Êtes-vous d'accord?"
-            required
-          ></v-checkbox>
+            <v-text-field
+              v-model="email"
+              :rules="emailRules"
+              label="E-mail"
+              prepend-icon="mdi-gmail"
+              color="#5b25f5"
+              required
+            ></v-text-field>
 
-          <v-btn
-            :disabled="!valid"
-            color="success"
-            class="mr-4"
-            @click="validate"
-          >
-            Inscription
-          </v-btn>
-        </v-form>
-      </v-col>
-    </v-row>
-  </v-container>
+            <div class="d-flex">
+              <v-text-field
+                :prepend-icon="show4 ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="show4 ? 'text' : 'password'"
+                @click:prepend="show4 = !show4"
+                v-model="password"
+                :rules="passwordRules"
+                label="Mot de passe"
+                color="#5b25f5"
+                required
+              >
+              </v-text-field>
+            </div>
+
+            <v-checkbox
+              color="#5b25f5"
+              v-model="checkbox"
+              :rules="[(v) => !!v || 'Vous devez accepter pour continuer!']"
+              label="Êtes-vous d'accord?"
+              required
+            ></v-checkbox>
+
+            <v-btn
+              :disabled="!valid"
+              color="success"
+              class="mr-4"
+              @click="validate"
+            >
+              Inscription
+            </v-btn>
+          </v-form>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
 </template>
 <script>
 export default {
@@ -89,3 +101,31 @@ export default {
   },
 };
 </script>
+<style scoped>
+.inscription{
+   color:#5b25f5;
+}
+.title-small-screen {
+  display: none;
+}
+@media (max-width: 576px) {
+  .img {
+    max-width: 98%;
+    margin: 15px auto;
+
+  }
+  .title-small-screen {
+    display: block;
+  }
+  .title-small-screen h2 {
+    color: #5b25f5;
+  }
+}
+@media (min-width: 900px) {
+  .img {
+    background-image: url("../../assets/groupomania.jpg");
+    background-size: 100%;
+    min-height: 510px;
+  }
+}
+</style>

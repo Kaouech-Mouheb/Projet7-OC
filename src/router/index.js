@@ -45,6 +45,15 @@ const routes = [{
     component: () =>
       import( /* webpackChunkName: "about" */ "../components/form/publication"),
   },
+  {
+    path: "/parametre-compte",
+    name: "parametreCompte",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import( /* webpackChunkName: "about" */ "../components/form/compte"),
+  },
 ];
 
 const router = new VueRouter({

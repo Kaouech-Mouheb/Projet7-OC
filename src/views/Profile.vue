@@ -28,7 +28,7 @@
               <div>{{ messages.birthday }}</div>
               <div>{{ messages.email }}</div>
               <div>
-                <v-btn><v-icon>mdi-cog-off-outline </v-icon> Compte</v-btn>
+                <v-btn @click="$router.push('/parametre-compte')"><v-icon>mdi-cog-off-outline </v-icon> Compte</v-btn>
               </div>
             </div>
           </v-timeline-item>
