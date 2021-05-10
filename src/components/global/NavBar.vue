@@ -32,25 +32,26 @@
 
             <v-list-item-content>
               <v-list-item-title
-                @click="$router.push('/dashbord')"
+                @click="$router.push('/')"
                 class="nav-item"
               >
-                Tableau de bord
+                Acceuil
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
 
           <v-list-item>
             <v-list-item-icon>
-              <v-icon> mdi-wrench</v-icon>
+              <v-icon>mdi-account-cog</v-icon>
+              
             </v-list-item-icon>
 
             <v-list-item-content>
               <v-list-item-title
-                @click="$router.push('/parametre')"
+                @click="$router.push('/account')"
                 class="nav-item"
               >
-                Paramétres
+                Mon compte
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>

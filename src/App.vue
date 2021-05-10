@@ -29,5 +29,6 @@ export default {
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
+  background: 	#F8F8F8;
 }
 </style>

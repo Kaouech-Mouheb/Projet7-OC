@@ -3,7 +3,6 @@
     <v-row class="d-flex justify-center">
       <v-col cols="12" sm="6">
         <v-form ref="form" v-model="valid" lazy-validation>
-
           <v-text-field
             v-model="email"
             :rules="emailRules"
@@ -13,18 +12,13 @@
           ></v-text-field>
 
           <div class="d-flex">
-            <a
-              @click.prevent="
-                inputType = inputType == 'password' ? 'text' : 'password'
-              "
-            >
-              <v-icon class="mr-2 mt-4">mdi-eye-outline</v-icon>
-            </a>
             <v-text-field
+              :prepend-icon="show4 ? 'mdi-eye' : 'mdi-eye-off'"
+              :type="show4 ? 'text' : 'password'"
+              @click:prepend="show4 = !show4"
               v-model="password"
               :rules="passwordRules"
               label="Mot de passe"
-              :type="inputType"
               required
             >
             </v-text-field>
@@ -37,7 +31,6 @@
           >
             Connexion
           </v-btn>
-          
         </v-form>
       </v-col>
     </v-row>
@@ -48,7 +41,8 @@ export default {
   name: "AppConnexion",
   data: () => ({
     valid: true,
-    inputType: "password",
+
+    show4: false,
 
     email: "",
     emailRules: [
@@ -67,7 +61,7 @@ export default {
   methods: {
     validate() {
       this.$refs.form.validate();
-    }
+    },
   },
 };
 </script>
