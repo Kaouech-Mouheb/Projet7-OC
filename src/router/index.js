@@ -8,6 +8,16 @@ const routes = [{
     path: "/",
     name: "Home",
     component: Home,
+    beforeEnter: (to, from, next) => {
+      // ...
+      if (JSON.parse(localStorage.getItem('user'))) {
+        next()
+      } else {
+        next({
+          path: '/login'
+        })
+      }
+    }
   },
   {
     path: "/register",
@@ -17,7 +27,18 @@ const routes = [{
     // which is lazy-loaded when the route is visited.
     component: () =>
       import( /* webpackChunkName: "about" */ "../components/form/Register.vue"),
+      beforeEnter: (to, from, next) => {
+        // ...
+        if (!JSON.parse(localStorage.getItem('user'))) {
+          next()
+        } else {
+          next({
+            path: '/'
+          })
+        }
+      }
   },
+  
   {
     path: "/login",
     name: "Login",
@@ -26,6 +47,16 @@ const routes = [{
     // which is lazy-loaded when the route is visited.
     component: () =>
       import( /* webpackChunkName: "about" */ "../components/form/Login.vue"),
+      beforeEnter: (to, from, next) => {
+        // ...
+        if (!JSON.parse(localStorage.getItem('user'))) {
+          next()
+        } else {
+          next({
+            path: '/'
+          })
+        }
+      }
   },
   {
     path: "/account",
@@ -35,8 +66,18 @@ const routes = [{
     // which is lazy-loaded when the route is visited.
     component: () =>
       import( /* webpackChunkName: "about" */ "../views/Profile.vue"),
+      beforeEnter: (to, from, next) => {
+        // ...
+        if (JSON.parse(localStorage.getItem('user'))) {
+            next()
+        } else {
+            next({
+                path: '/login'
+            })
+        }
+    }
   },
-   {
+  {
     path: "/create-publication",
     name: "CreatePublication",
     // route level code-splitting
@@ -44,6 +85,16 @@ const routes = [{
     // which is lazy-loaded when the route is visited.
     component: () =>
       import( /* webpackChunkName: "about" */ "../components/form/publication"),
+      beforeEnter: (to, from, next) => {
+        // ...
+        if (JSON.parse(localStorage.getItem('user'))) {
+            next()
+        } else {
+            next({
+                path: '/login'
+            })
+        }
+    }
   },
   {
     path: "/parametre-compte",
@@ -53,6 +104,16 @@ const routes = [{
     // which is lazy-loaded when the route is visited.
     component: () =>
       import( /* webpackChunkName: "about" */ "../components/form/compte"),
+      beforeEnter: (to, from, next) => {
+        // ...
+        if (JSON.parse(localStorage.getItem('user'))) {
+            next()
+        } else {
+            next({
+                path: '/login'
+            })
+        }
+    }
   },
 ];
 

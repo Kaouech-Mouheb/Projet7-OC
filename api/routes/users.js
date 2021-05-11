@@ -1,9 +1,14 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const userCtrl = require('../controllers/auth');
+const multer = require('../middleware/multer');
+const auth = require('../middleware/auth');
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
+// ROUTES //
 
+router.post('/register', userCtrl.register);
+router.post('/login', userCtrl.login);
+
+
+/* EXPORT */
 module.exports = router;

@@ -1,7 +1,7 @@
 <template>
   <div class="img">
     <v-container>
-        <div class="title-small-screen">
+      <div class="title-small-screen">
         <h2 class="text-center">Groupomania</h2>
       </div>
       <v-row class="d-flex justify-center">
@@ -40,6 +40,12 @@
             >
               Connexion
             </v-btn>
+            <small
+              class="text-danger text-center d-block"
+              v-show="messageError"
+            >
+              {{ messageError }}</small
+            >
           </v-form>
         </v-col>
       </v-row>
@@ -49,11 +55,13 @@
 <script>
 export default {
   name: "AppConnexion",
+  created() {
+
+  },
   data: () => ({
     valid: true,
-
+    messageError: "",
     show4: false,
-
     email: "",
     emailRules: [
       (v) => !!v || "L'email est requis",
@@ -71,13 +79,26 @@ export default {
   methods: {
     validate() {
       this.$refs.form.validate();
+      let user = {
+        email: this.email,
+        password: this.password,
+      };
+      this.$store
+        .dispatch("auth/Login", user)
+        .then(() => {
+          this.$router.push("/");
+        })
+        .catch((error) => {
+          this.messageError = error.response.data.error;
+        });
     },
+ 
   },
 };
 </script>
 <style scoped>
-.connexion{
-  color:#5b25f5;
+.connexion {
+  color: #5b25f5;
 }
 .title-small-screen {
   display: none;
@@ -86,7 +107,6 @@ export default {
   .img {
     max-width: 98%;
     margin: 15px auto;
-
   }
   .title-small-screen {
     display: block;
