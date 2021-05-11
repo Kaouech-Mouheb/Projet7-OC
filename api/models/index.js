@@ -8,7 +8,7 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.js')[env];
 const db = {};
 
-let sequelize = new Sequelize(config.database, config.username, config.password, config)
+let sequelize = new Sequelize(config.database, config.username, config.password, config);
 
 fs
   .readdirSync(__dirname)
@@ -30,8 +30,9 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 db.sequelize.sync({
-  force: false
+    force: false
 }).then(() => {
-  console.log("Drop and re-sync db.");
+    console.log("Drop and re-sync db.");
 });
 module.exports = db;
+
