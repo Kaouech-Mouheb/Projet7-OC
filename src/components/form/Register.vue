@@ -53,18 +53,23 @@
 
             <v-btn
               :disabled="!valid"
+              :loading="loading"
               color="success"
               class="mr-4"
               @click="validate"
             >
               Inscription
             </v-btn>
-            <small class="text-danger text-center d-block" v-if="messageError">{{messageError}}</small>
-            <div v-if="messageSuccess"> 
+            <small
+              class="text-danger text-center d-block"
+              v-if="messageError"
+              >{{ messageError }}</small
+            >
+            <div v-if="messageSuccess">
               <small class="text-success text-center">
-              votre compte a été créé avec succès 
-            </small>
-            <router-link to="/login">login</router-link>
+                votre compte a été créé avec succès
+              </small>
+              <router-link to="/login">login</router-link>
             </div>
           </v-form>
         </v-col>
@@ -77,10 +82,11 @@ export default {
   name: "AppConnexion",
   data: () => ({
     valid: true,
+    loading: false,
     show4: false,
 
-    messageError:"",
-    messageSuccess:"",
+    messageError: "",
+    messageSuccess: "",
     name: "",
     nameRules: [
       (v) => !!v || "Le Nom est requis",
@@ -106,19 +112,25 @@ export default {
   methods: {
     validate() {
       this.$refs.form.validate();
-      let user = {
-        username:this.name,
-        email:this.email,
-        password:this.password
-      }
-      this.$store
-        .dispatch("auth/Register", user)
-        .then(() => {
-          this.messageSuccess = true;
-        })
-        .catch((error) => {
-          this.messageError = error.response.data.error;
-        });
+
+      setTimeout(() => {
+        if (this.valid) {
+          this.loading = true;
+          let user = {
+            username: this.name,
+            email: this.email,
+            password: this.password,
+          };
+          this.$store
+            .dispatch("auth/Register", user)
+            .then(() => {
+              this.messageSuccess = true;
+            })
+            .catch((error) => {
+              this.messageError = error.response.data.error;
+            });
+        }
+      }, 10);
     },
   },
 };

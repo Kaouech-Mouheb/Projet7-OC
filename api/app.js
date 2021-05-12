@@ -7,6 +7,8 @@ const bodyParser = require('body-parser');
 var db = require('./models');
 
 const userRoutes = require('./routes/users');
+const publicationRoutes = require('./routes/publication');
+
 
 
 var app = express();
@@ -17,21 +19,18 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
   next();
 });
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-//Parser les corps des requête + forcer parse d'objets inclus dans d'autres objets
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 //  ENDPOINTS CHEMIN D'ACCES //
 app.use('/api/auth', userRoutes);
+app.use('/api/publications', publicationRoutes);
 
 
 // catch 404 and forward to error handler

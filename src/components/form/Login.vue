@@ -34,6 +34,7 @@
             </div>
             <v-btn
               :disabled="!valid"
+              :loading="loading"
               color="success"
               class="mr-4"
               @click="validate"
@@ -55,10 +56,9 @@
 <script>
 export default {
   name: "AppConnexion",
-  created() {
-
-  },
+  created() {},
   data: () => ({
+    loading: false,
     valid: true,
     messageError: "",
     show4: false,
@@ -79,20 +79,24 @@ export default {
   methods: {
     validate() {
       this.$refs.form.validate();
-      let user = {
-        email: this.email,
-        password: this.password,
-      };
-      this.$store
-        .dispatch("auth/Login", user)
-        .then(() => {
-          this.$router.push("/");
-        })
-        .catch((error) => {
-          this.messageError = error.response.data.error;
-        });
+      setTimeout(() => {
+        if (this.valid) {
+          this.loading = true;
+          let user = {
+            email: this.email,
+            password: this.password,
+          };
+          this.$store
+            .dispatch("auth/Login", user)
+            .then(() => {
+              this.$router.push("/");
+            })
+            .catch((error) => {
+              this.messageError = error.response.data.error;
+            });
+        }
+      }, 10);
     },
- 
   },
 };
 </script>
