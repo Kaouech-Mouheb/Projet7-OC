@@ -4,22 +4,33 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
       <h2>
-        <router-link to="/" class="title-groupomania"> Groupomania </router-link>
+        <router-link to="/" class="title-groupomania">
+          Groupomania
+        </router-link>
       </h2>
 
       <v-spacer> </v-spacer>
-      <router-link to="/login">
-        <span class="connexion" title="click to login">
-          <v-icon>mdi-account-arrow-right-outline</v-icon>
-          Connexion
-        </span>
-      </router-link>
-      <span class="connexion" title="click to register">
-        <router-link to="/register">
-          <v-icon>mdi-circle-edit-outline</v-icon>
-          Inscription
+      <div v-if="deconnexion">
+        <router-link to="/login">
+          <span class="connexion" title="click to login">
+            <v-icon>mdi-account-arrow-right-outline</v-icon>
+            Connexion
+          </span>
         </router-link>
-      </span>
+
+        <router-link to="/register">
+          <span class="connexion" title="click to login">
+            <v-icon>mdi-circle-edit-outline</v-icon>
+            Inscription
+          </span>
+        </router-link>
+      </div>
+      <div v-if="!deconnexion">
+        <span class="connexion" @click.prevent="loggout">
+          <v-icon>mdi-power-settings</v-icon>
+          Déconnexion
+        </span>
+      </div>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" absolute temporary>
@@ -31,10 +42,7 @@
             </v-list-item-icon>
 
             <v-list-item-content>
-              <v-list-item-title
-                @click="$router.push('/')"
-                class="nav-item"
-              >
+              <v-list-item-title @click="$router.push('/')" class="nav-item">
                 Acceuil
               </v-list-item-title>
             </v-list-item-content>
@@ -43,7 +51,6 @@
           <v-list-item>
             <v-list-item-icon>
               <v-icon>mdi-account-cog</v-icon>
-              
             </v-list-item-icon>
 
             <v-list-item-content>
@@ -62,11 +69,34 @@
 </template>
 <script>
 export default {
+  created() {
+    console.log(window.location.pathname);
+    this.navItem();
+  },
   name: "AppNav",
   data() {
     return {
       drawer: false,
+      deconnexion: false,
     };
+  },
+  methods: {
+    navItem() {
+      if (
+        window.location.pathname == "/login" ||
+        window.location.pathname == "/register"
+      ) {
+        this.deconnexion = true;
+      }
+      console.log(this.deconnexion);
+    },
+    loggout() {
+      localStorage.removeItem("user");
+      localStorage.removeItem("admin");
+      localStorage.removeItem("token");
+      this.deconnexion = true;
+      this.$router.push("/login");
+    },
   },
 };
 </script>
@@ -76,7 +106,6 @@ a {
   text-decoration: none;
 }
 .title-groupomania {
- 
   margin-left: 60px !important;
 }
 .connexion {

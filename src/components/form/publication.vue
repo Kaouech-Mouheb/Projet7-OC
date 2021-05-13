@@ -3,40 +3,44 @@
     <div class="close" title="Fermer">
       <v-btn icon @click="close()"> <v-icon>mdi-close-box</v-icon></v-btn>
     </div>
+  
     <div class="row bg-white">
+    <h1 class="h5 text-center mt-2">Publication</h1>
+    <div class="col"><hr></div>
       <v-form ref="form" v-model="valid" lazy-validation>
-        <div class="col">
-          <v-textarea
-            :rules="[
-              (v) => !!v || 'Ce champs est requis',
-              (v) => v.length <= 25 || 'Max 25 characters',
-            ]"
-            counter
-            placeholder="Ajouter une photo"
-            label="Description"
-            v-model="description"
-            color="#5b25f5"
-            required
-          ></v-textarea>
-        </div>
-
-        <div class="col">
-          <v-file-input
-            :rules="rulesImg"
-            v-model="image"
-            placeholder="Ajouter une photo"
-            label="Avatar"
-            color="#5b25f5"
-            show-size
-            prepend-icon="mdi-camera"
-          >
-            <template v-slot:selection="{ text }">
-              <v-chip small label color="primary">
-                {{ text }}
-              </v-chip>
-            </template>
-          </v-file-input>
-        </div>
+        <v-textarea
+          :rules="[
+            (v) => !!v || 'Ce champs est requis',
+            (v) => v.length <= 25 || 'Max 25 characters',
+          ]"
+      
+          label="Description"
+          v-model="description"
+          color="#5b25f5"
+          counter
+          required
+        ></v-textarea>
+        <v-file-input
+          label="Avatar"
+          placeholder="Ajouter une photo"
+          accept="image/png, image/jpeg, image/bmp"
+          :rules="[
+            (value) =>
+              !value ||
+              value.size < 2000000 ||
+              'Avatar size should be less than 2 MB!',
+          ]"
+          v-model="image"
+          prepend-icon="mdi-camera"
+          color="#5b25f5"
+          show-size
+        >
+          <template v-slot:selection="{ text }">
+            <v-chip small label color="#5b25f5" dark>
+              {{ text }}
+            </v-chip>
+          </template>
+        </v-file-input>
         <v-btn
           :disabled="!valid"
           :loading="loading"
@@ -46,11 +50,11 @@
         >
           Publiez
         </v-btn>
-
-        <small class="text-danger text-center d-block" v-show="messageError">
-          {{ messageError }}</small
-        >
       </v-form>
+
+      <small class="text-danger text-center d-block" v-show="messageError">
+        {{ messageError }}</small
+      >
     </div>
   </div>
 </template>
@@ -60,13 +64,9 @@ export default {
   data: () => ({
     loading: false,
     valid: true,
-    image: "",
+    image: null,
     messageError: "",
     description: "Hello!",
-    rulesImg: [
-      (v) => !!v || "Ce champs est requis",
-      (v) => v.size < 2000000 || "Avatar size should be less than 2 MB!",
-    ],
   }),
   methods: {
     close() {
@@ -95,6 +95,9 @@ export default {
 };
 </script>
 <style scoped>
+h1{
+  color:#5b25f5;
+}
 .close-publication {
   position: relative;
 }

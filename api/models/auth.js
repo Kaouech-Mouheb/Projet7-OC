@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-           
+
             models.User.hasMany(models.Like);
             models.User.hasMany(models.Publication);
 
@@ -27,18 +27,28 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             type: DataTypes.STRING
         },
+        lastName: {
+            allowNull: true,
+            type: DataTypes.STRING
+        },
+        birthday: {
+            allowNull: true,
+            type: DataTypes.STRING
+        },
         password: DataTypes.STRING,
         avatar: {
             allowNull: true,
             type: DataTypes.STRING
         },
+
         bio: {
             allowNull: true,
             type: DataTypes.STRING
         },
         isAdmin: {
             allowNull: false,
-            type: DataTypes.BOOLEAN
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         }
     }, {
         sequelize,

@@ -9,6 +9,10 @@ const auth = require('../middleware/auth');
 router.post('/register', userCtrl.register);
 router.post('/login', userCtrl.login);
 
+router.get('/', auth, userCtrl.getUserAccount);
+router.get('/users', auth, userCtrl.getAllUsers);
+
+router.put('/update', auth, multer, userCtrl.updateProfil);
 
 /* EXPORT */
 module.exports = router;

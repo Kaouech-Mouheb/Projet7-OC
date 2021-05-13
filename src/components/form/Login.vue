@@ -91,7 +91,11 @@ export default {
             .then(() => {
               this.$router.push("/");
             })
+            .then(() =>{
+              document.location.reload();
+            })
             .catch((error) => {
+              this.loading = false;
               this.messageError = error.response.data.error;
             });
         }

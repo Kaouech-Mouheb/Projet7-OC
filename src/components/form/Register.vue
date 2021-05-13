@@ -127,6 +127,7 @@ export default {
               this.messageSuccess = true;
             })
             .catch((error) => {
+               this.loading = false;
               this.messageError = error.response.data.error;
             });
         }

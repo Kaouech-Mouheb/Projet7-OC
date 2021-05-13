@@ -1,14 +1,17 @@
 <template>
   <v-container fluid>
     <v-card class="container">
+      <div class="close" title="Fermer">
+        <v-btn icon @click="close()"> <v-icon>mdi-close-box</v-icon></v-btn>
+      </div>
       <v-row>
         <v-col cols="4">
           <v-subheader>Nom</v-subheader>
         </v-col>
         <v-col cols="8">
           <v-text-field
+            v-model="infos.username"
             label="Nom"
-            value="kaouech"
             color="#5b25f5"
           ></v-text-field>
         </v-col>
@@ -20,8 +23,8 @@
         </v-col>
         <v-col cols="8">
           <v-text-field
+            v-model="infos.lastName"
             label="Prénom"
-            value="Mouheb"
             color="#5b25f5"
           ></v-text-field>
         </v-col>
@@ -33,8 +36,8 @@
         </v-col>
         <v-col cols="8">
           <v-text-field
+            v-model="infos.email"
             label="Email address"
-            value="mouhebkaouach@hotmail.fr"
             color="#5b25f5"
           ></v-text-field>
         </v-col>
@@ -61,7 +64,7 @@
                 persistent-hint
                 prepend-icon="mdi-calendar"
                 v-bind="attrs"
-                @blur="date = parseDate(dateFormatted)"
+                @blur="infos.date = parseDate(dateFormatted)"
                 v-on="on"
               ></v-text-field>
             </template>
@@ -72,9 +75,26 @@
             ></v-date-picker>
           </v-menu>
           <p>
-            Date in ISO format: <strong>{{ date }}</strong>
+            Date in ISO format: <strong>{{ infos.date }}</strong>
           </p>
         </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="4">
+          <v-subheader>Avatar</v-subheader>
+        </v-col>
+        <v-col cols="8">
+          <v-file-input
+            v-model="infos.avatar"
+            :rules="rules"
+            accept="image/png, image/jpeg, image/bmp"
+            placeholder="Pick an avatar"
+            prepend-icon="mdi-camera"
+            color="#5b25f5"
+            label="Avatar"
+          ></v-file-input>
+        </v-col>
+        <v-btn @click="updateProfil()" :loading="isLoading"> Validez </v-btn>
       </v-row>
       <hr />
       <v-row>
@@ -166,14 +186,16 @@
             </v-btn>
           </v-form>
         </v-row>
-        <hr>
+        <hr />
       </div>
 
       <div v-if="supprimerCompte">
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-row>
             <v-col cols="4">
-              <small class="text-secondary">Entrée votre mot de passe pour validez</small>
+              <small class="text-secondary"
+                >Entrée votre mot de passe pour validez</small
+              >
             </v-col>
             <v-col cols="8">
               <v-text-field
@@ -205,11 +227,28 @@
 </template>
 <script>
 export default {
+  created() {
+    this.$store.dispatch("auth/GetOneUser");
+    setTimeout(() => {
+      this.user();
+    }, 10);
+  },
+
   data: (vm) => ({
     date: new Date("2013/12/02").toISOString().substr(0, 10),
     dateFormatted: vm.formatDate(
       new Date("2013/12/02").toISOString().substr(0, 10)
     ),
+    infos: {
+      username: "",
+      lastName: "",
+      avatar: null,
+      email: "",
+      bio:"",
+      isAdmin:false,
+      date: "",
+    },
+    isLoading: false,
     supprimerCompte: false,
     passwordModify: false,
     passwordSupprimer: "",
@@ -219,6 +258,12 @@ export default {
     supprimerBtn: "",
     password: "",
     valid: true,
+    rules: [
+      (value) =>
+        !value ||
+        value.size < 2000000 ||
+        "Avatar size should be less than 2 MB!",
+    ],
     passwordRules: [
       (v) => !!v || "Le mot de passe est requis",
       (v) =>
@@ -231,15 +276,63 @@ export default {
     computedDateFormatted() {
       return this.formatDate(this.date);
     },
+    username() {
+      return this.$store.state.auth.user.username;
+    },
+    lastName() {
+      return this.$store.state.auth.user.lastName;
+    },
+    email() {
+      return this.$store.state.auth.user.email;
+    },
+    birthday() {
+      return this.$store.state.auth.user.birthday;
+    },
+    bio() {
+      return this.$store.state.auth.user.bio;
+    },
+    avatar() {
+      return this.$store.state.auth.user.avatar;
+    },
   },
 
   watch: {
     date() {
-      this.dateFormatted = this.formatDate(this.date);
+      this.dateFormatted = this.formatDate(this.infos.date);
     },
   },
 
   methods: {
+    user() {
+      this.infos.username = this.username;
+      this.infos.email = this.email;
+      this.infos.avatar = this.avatar || null;
+      this.infos.bio = this.bio || ""
+      this.infos.lastName = this.lastName || "";
+      this.infos.date = new Date(this.birthday || "01/12/1900")
+        .toISOString()
+        .substr(0, 10);
+    },
+    updateProfil() {
+      const formData = require('form-data');
+      let form = new formData();
+      form.append('file', this.infos.avatar);
+      form.append('username', this.infos.username);
+      form.append('lastName', this.infos.lastName);
+      form.append('email', this.infos.email);
+      form.append('birthday', this.infos.birthday);
+      form.append('bio', this.infos.bio);
+      form.append('isAdmin', this.infos.isAdmin);
+
+      this.isLoading = true;
+      return this.$store
+        .dispatch("auth/UpdateProfil", form)
+        .then(() => {
+          window.location.reload();
+        })
+        .catch((error) => (this.messageError = error.response.data.error))
+        .finally(() => (this.isLoading = false));
+    },
     formatDate(date) {
       if (!date) return null;
 
@@ -255,6 +348,19 @@ export default {
     validate() {
       this.$refs.form.validate();
     },
+    close() {
+      return window.history.back();
+    },
   },
 };
 </script>
+<style scoped>
+.close-publication {
+  position: relative;
+}
+.close {
+  position: absolute;
+  right: 2px;
+  top: 15px;
+}
+</style>

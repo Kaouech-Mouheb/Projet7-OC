@@ -12,7 +12,7 @@
               src="https://cdn.pixabay.com/photo/2020/06/24/19/12/cabbage-5337431_1280.jpg"
             />
           </v-avatar>
-          <p class="ml-3">Kaouech Mouheb</p>
+          <p class="ml-3 text-capitalize">{{ username }}</p>
         </v-card-title>
       </v-img>
 
@@ -20,18 +20,24 @@
         <div class="font-weight-bold ml-8 mb-2">Infos</div>
 
         <v-timeline align-top dense>
-          <v-timeline-item :color="messages.color">
+          <v-timeline-item color="deep-purple lighten-1">
             <div>
               <div class="font-weight-normal">
-                <strong>{{ messages.name }} {{ messages.lastName }}</strong>
+                <strong class="text-capitalize">{{ username }}</strong>
               </div>
-              <div>{{ messages.birthday }}</div>
-              <div>{{ messages.email }}</div>
+              <div v-if="birthday">{{ birthday }}</div>
+              <div>{{ email }}</div>
               <div>
                 <v-btn @click="$router.push('/parametre-compte')"
                   ><v-icon>mdi-cog-off-outline </v-icon>Avancé</v-btn
                 >
               </div>
+            </div>
+            <div v-if="!birthday || !bio || !lastname || avatar" class="mt-2">
+              <v-btn fab dark small color="primary" @click="$router.push('/parametre-compte')">
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+              <small class="text-primary"> complétez votre profil</small>
             </div>
           </v-timeline-item>
         </v-timeline>
@@ -46,20 +52,30 @@
 </template>
 <script>
 import AppPublication from "../components/publication/Publication";
+
 export default {
   name: "AppProfile",
   components: {
     AppPublication,
   },
-  data: () => ({
-    messages: {
-      name: "kaouech",
-      lastName: "Mouheb",
-      birthday: "12/09/1991",
-      post: "admin",
-      email: "mouhebkaouach@hotmail.fr",
-      color: "deep-purple lighten-1",
+  computed: {
+    username() {
+      return this.$store.state.auth.user.username;
     },
-  }),
+    email() {
+      return this.$store.state.auth.user.email;
+    },
+    birthday() {
+      return this.$store.state.auth.user.birthday;
+    },
+    bio() {
+      return this.$store.state.auth.user.bio;
+    },
+    avatar() {
+      return this.$store.state.auth.user.avatar;
+    },
+ 
+  },
+  data: () => ({}),
 };
 </script>

@@ -93,9 +93,102 @@ exports.login = (req, res, next) => {
                 }))
         })
         .catch(error => {
-           return res.status(500).json({
+            return res.status(500).json({
                 'error': error
             })
         })
 };
+exports.getUserAccount = (req, res) => {
+    //identification du demandeur
+    let id = utilsJwt.getUserId(req.headers.authorization);
+    db.User.findOne({
 
+            attributes: {
+                exclude: ["password"]
+            },
+            where: {
+                id: id
+            }
+        }).then(user => res.status(200).json(user))
+        .catch(error => res.status(400).json({
+            'error': error
+        }));
+}
+exports.getAllUsers = (req, res) => {
+    db.User.findAll({
+            attributes: {
+                exclude: ["password"]
+            },
+        })
+        .then(user => res.status(200).json(user))
+        .catch(error => res.status(400).json({
+            'error': error
+        }));
+
+}
+exports.updateProfil = (req, res) => {
+    let id = utilsJwt.getUserId(req.headers.authorization)
+    let profil = {
+        email: req.body.email,
+        username: req.body.username,
+        lastName: req.body.lastName,
+        birthday: req.body.birthday,
+        avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+        bio: req.body.bio,
+        isAsmin: req.body.isAdmin
+    }
+    console.log(profil);
+    db.User.findOne({
+        where:{
+            id:id
+        }
+    })
+    .then(() =>{
+        db.User.update( profil,{
+            where:{
+                id:id
+            }
+        })
+        .then(() => {
+            return res.status(200).send({
+                'message': "Publication modifiée"
+            })
+        }).catch(error => res.status(400).json({
+            error
+        }))
+    })
+}
+exports.updateAvatar = (req, res) => {
+    //identification du demandeur
+    let id = utilsJwt.getUserId(req.headers.authorization);
+    models.User.findOne({
+            where: {
+                id: id
+            }
+        })
+        .then(user => {
+            //Vérification que le demandeur est soit l'admin soit le poster (vérif aussi sur le front)
+            if (user.isAdmin == JSON.parse(req.body.Admin)) {
+                console.log('Modif ok pour le post :');
+                //si la requête contienne le nom changer le nom
+                models.User
+                    .update({
+                        avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+                    }, {
+                        where: {
+                            id: id
+                        }
+                    })
+                    .then(() => res.json({
+                        avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+                    }))
+                    .catch(err => res.status(500).json(err))
+
+            } else {
+                res.status(401).json({
+                    'error': 'Utilisateur non autorisé à modifier ce post'
+                })
+            }
+        })
+        .catch(error => res.status(500).json(error));
+}

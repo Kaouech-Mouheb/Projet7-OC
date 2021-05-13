@@ -2,7 +2,7 @@ const axios = require('axios').default;
 const API_URL = 'http://localhost:3000/api/publications';
 
 class PublicationService {
-    postPublication(publication){
+    postPublication(publication) {
         return axios({
             method: 'post',
             url: API_URL,
@@ -14,6 +14,17 @@ class PublicationService {
             }
         })
 
+    }
+    getPublication() {
+        return axios
+            .get(API_URL, {
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${JSON.parse(
+                    localStorage.getItem("user")
+                )}`
+                }
+            })
     }
 
 }
