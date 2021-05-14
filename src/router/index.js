@@ -10,7 +10,7 @@ const routes = [{
     component: Home,
     beforeEnter: (to, from, next) => {
       // ...
-      if (JSON.parse(localStorage.getItem('user'))) {
+      if (JSON.parse(localStorage.getItem('token'))) {
         next()
       } else {
         next({
@@ -29,7 +29,7 @@ const routes = [{
       import( /* webpackChunkName: "about" */ "../components/form/Register.vue"),
       beforeEnter: (to, from, next) => {
         // ...
-        if (!JSON.parse(localStorage.getItem('user'))) {
+        if (!JSON.parse(localStorage.getItem('token'))) {
           next()
         } else {
           next({
@@ -49,7 +49,7 @@ const routes = [{
       import( /* webpackChunkName: "about" */ "../components/form/Login.vue"),
       beforeEnter: (to, from, next) => {
         // ...
-        if (!JSON.parse(localStorage.getItem('user'))) {
+        if (!JSON.parse(localStorage.getItem('token'))) {
           next()
         } else {
           next({
@@ -68,7 +68,7 @@ const routes = [{
       import( /* webpackChunkName: "about" */ "../views/Profile.vue"),
       beforeEnter: (to, from, next) => {
         // ...
-        if (JSON.parse(localStorage.getItem('user'))) {
+        if (JSON.parse(localStorage.getItem('token'))) {
             next()
         } else {
             next({
@@ -87,7 +87,7 @@ const routes = [{
       import( /* webpackChunkName: "about" */ "../components/form/publication"),
       beforeEnter: (to, from, next) => {
         // ...
-        if (JSON.parse(localStorage.getItem('user'))) {
+        if (JSON.parse(localStorage.getItem('token'))) {
             next()
         } else {
             next({
@@ -106,7 +106,7 @@ const routes = [{
       import( /* webpackChunkName: "about" */ "../components/form/compte"),
       beforeEnter: (to, from, next) => {
         // ...
-        if (JSON.parse(localStorage.getItem('user'))) {
+        if (JSON.parse(localStorage.getItem('token'))) {
             next()
         } else {
             next({

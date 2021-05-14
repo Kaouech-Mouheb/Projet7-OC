@@ -40,7 +40,19 @@ class AuthService {
     updateProfil(infos) {
         return axios({
             method: 'PUT',
-            url: API_URL + "update",
+            url: API_URL + "update-profil",
+            data: infos,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': BearerToken
+            }
+        })
+    }
+    updateImage(infos) {
+        return axios({
+            method: 'PUT',
+            url: API_URL + "update-image",
             data: infos,
             headers: {
                 'Accept': 'application/json',

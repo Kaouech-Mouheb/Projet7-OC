@@ -122,11 +122,12 @@ exports.getAllUsers = (req, res) => {
         })
         .then(user => res.status(200).json(user))
         .catch(error => res.status(400).json({
-            'error': error
+            'error': `${errro} veuillez vous reconnecter`
         }));
 
 }
-exports.updateProfil = (req, res) => {
+/**
+ * 
     let id = utilsJwt.getUserId(req.headers.authorization)
     let profil = {
         email: req.body.email,
@@ -134,6 +135,18 @@ exports.updateProfil = (req, res) => {
         lastName: req.body.lastName,
         birthday: req.body.birthday,
         avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+        bio: req.body.bio,
+        isAsmin: req.body.isAdmin
+    }
+ */
+exports.updateProfil = (req, res) => {
+    console.log(req.body)
+    let id = utilsJwt.getUserId(req.headers.authorization)
+    let profil = {
+        email: req.body.email,
+        username: req.body.username,
+        lastName: req.body.lastName,
+        birthday: req.body.birthday,
         bio: req.body.bio,
         isAsmin: req.body.isAdmin
     }

@@ -19,8 +19,8 @@ class PublicationService {
         return axios
             .get(API_URL, {
                 headers: {
-                    Accept: "application/json",
-                    Authorization: `Bearer ${JSON.parse(
+                    'Accept': "application/json",
+                    'Authorization': `Bearer ${JSON.parse(
                     localStorage.getItem("user")
                 )}`
                 }

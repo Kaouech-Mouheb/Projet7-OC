@@ -48,35 +48,26 @@
         </v-col>
         <v-col cols="8">
           <v-menu
-            ref="menu1"
             v-model="menu1"
             :close-on-content-click="false"
-            transition="scale-transition"
-            offset-y
-            max-width="290px"
-            min-width="auto"
+            max-width="290"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="dateFormatted"
-                label="Date"
-                hint="MM/DD/YYYY format"
-                persistent-hint
-                prepend-icon="mdi-calendar"
+                :value="computedDateFormattedMomentjs"
+                clearable
+                label="Date de naissance"
+                readonly
                 v-bind="attrs"
-                @blur="infos.date = parseDate(dateFormatted)"
                 v-on="on"
+                @click:clear="date = null"
               ></v-text-field>
             </template>
             <v-date-picker
               v-model="date"
-              no-title
-              @input="menu1 = false"
+              @change="menu1 = false"
             ></v-date-picker>
           </v-menu>
-          <p>
-            Date in ISO format: <strong>{{ infos.date }}</strong>
-          </p>
         </v-col>
       </v-row>
       <v-row>
@@ -86,15 +77,38 @@
         <v-col cols="8">
           <v-file-input
             v-model="infos.avatar"
-            :rules="rules"
+            @change="onFileChange"
             accept="image/png, image/jpeg, image/bmp"
             placeholder="Pick an avatar"
+            id="file"
             prepend-icon="mdi-camera"
             color="#5b25f5"
             label="Avatar"
           ></v-file-input>
         </v-col>
-        <v-btn @click="updateProfil()" :loading="isLoading"> Validez </v-btn>
+        <v-row>
+          <v-col cols="4"></v-col>
+          <v-col cols="8">
+            <v-img
+              :src="url || infos.avatar"
+              lazy-src="https://picsum.photos/10/6?image"
+              aspect-ratio="1"
+              class="grey lighten-2 image-viewer"
+            >
+              <template v-slot:placeholder>
+                <v-row class="fill-height ma-0" align="center" justify="center">
+                  <v-progress-circular
+                    indeterminate
+                    color="grey lighten-5"
+                  ></v-progress-circular>
+                </v-row>
+              </template>
+            </v-img>
+          </v-col>
+        </v-row>
+        <v-col>
+          <v-btn @click="updateProfil()" :loading="isLoading"> Validez </v-btn>
+        </v-col>
       </v-row>
       <hr />
       <v-row>
@@ -192,7 +206,7 @@
       <div v-if="supprimerCompte">
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-row>
-            <v-col cols="4">
+            <v-col cols="4">    console.log(this.avatar);
               <small class="text-secondary"
                 >Entrée votre mot de passe pour validez</small
               >
@@ -216,7 +230,7 @@
             color="error"
             :disabled="!valid"
             class="mr-4 mb-4"
-            @click="validate"
+            @click.prevent="validate"
           >
             Validez
           </v-btn>
@@ -226,6 +240,8 @@
   </v-container>
 </template>
 <script>
+import moment from "moment";
+import { format, parseISO } from "date-fns";
 export default {
   created() {
     this.$store.dispatch("auth/GetOneUser");
@@ -233,21 +249,18 @@ export default {
       this.user();
     }, 10);
   },
-
-  data: (vm) => ({
-    date: new Date("2013/12/02").toISOString().substr(0, 10),
-    dateFormatted: vm.formatDate(
-      new Date("2013/12/02").toISOString().substr(0, 10)
-    ),
+  
+  data: () => ({
+    date: format(parseISO(new Date().toISOString()), "yyyy-MM-dd"),
     infos: {
       username: "",
       lastName: "",
       avatar: null,
       email: "",
-      bio:"",
-      isAdmin:false,
-      date: "",
+      bio: "",
+      isAdmin: false,
     },
+    url: "",
     isLoading: false,
     supprimerCompte: false,
     passwordModify: false,
@@ -258,12 +271,7 @@ export default {
     supprimerBtn: "",
     password: "",
     valid: true,
-    rules: [
-      (value) =>
-        !value ||
-        value.size < 2000000 ||
-        "Avatar size should be less than 2 MB!",
-    ],
+
     passwordRules: [
       (v) => !!v || "Le mot de passe est requis",
       (v) =>
@@ -273,8 +281,8 @@ export default {
   }),
 
   computed: {
-    computedDateFormatted() {
-      return this.formatDate(this.date);
+    computedDateFormattedMomentjs() {
+      return this.date ? moment(this.date).format("dddd, MMMM Do YYYY") : "";
     },
     username() {
       return this.$store.state.auth.user.username;
@@ -292,7 +300,7 @@ export default {
       return this.$store.state.auth.user.bio;
     },
     avatar() {
-      return this.$store.state.auth.user.avatar;
+        return this.$store.state.auth.user.avatar;
     },
   },
 
@@ -306,32 +314,34 @@ export default {
     user() {
       this.infos.username = this.username;
       this.infos.email = this.email;
-      this.infos.avatar = this.avatar || null;
-      this.infos.bio = this.bio || ""
+      this.infos.avatar = this.avatar || "//ssl.gstatic.com/accounts/ui/avatar_2x.png";
+      this.infos.bio = this.bio || "";
       this.infos.lastName = this.lastName || "";
-      this.infos.date = new Date(this.birthday || "01/12/1900")
-        .toISOString()
-        .substr(0, 10);
+      this.date = this.birthday || ""
+    },
+    onFileChange() {
+      this.url = URL.createObjectURL(this.infos.avatar);
     },
     updateProfil() {
-      const formData = require('form-data');
-      let form = new formData();
-      form.append('file', this.infos.avatar);
-      form.append('username', this.infos.username);
-      form.append('lastName', this.infos.lastName);
-      form.append('email', this.infos.email);
-      form.append('birthday', this.infos.birthday);
-      form.append('bio', this.infos.bio);
-      form.append('isAdmin', this.infos.isAdmin);
-
+      let infos = {
+        username: this.infos.username,
+        lastName: this.infos.lastName,
+        email: this.infos.email,
+        birthday: this.date,
+        bio: this.infos.bio,
+        isAdmin: this.infos.isAdmin,
+      };
       this.isLoading = true;
       return this.$store
-        .dispatch("auth/UpdateProfil", form)
-        .then(() => {
-          window.location.reload();
-        })
+        .dispatch("auth/UpdateProfil", infos)
+     
         .catch((error) => (this.messageError = error.response.data.error))
         .finally(() => (this.isLoading = false));
+    },
+    updateImage() {
+      const formData = require("form-data");
+      let form = new formData();
+      form.append("file", this.infos.avatar);
     },
     formatDate(date) {
       if (!date) return null;
@@ -362,5 +372,11 @@ export default {
   position: absolute;
   right: 2px;
   top: 15px;
+}
+.image-viewer {
+  height: 250px;
+  width: 200px;
+  border-radius: 50%;
+  border: 2px solid gray;
 }
 </style>
