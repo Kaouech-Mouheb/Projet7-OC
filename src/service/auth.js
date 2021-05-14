@@ -49,11 +49,11 @@ class AuthService {
             }
         })
     }
-    updateImage(infos) {
+    updateImage(image) {
         return axios({
             method: 'PUT',
             url: API_URL + "update-image",
-            data: infos,
+            data: image,
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'multipart/form-data',

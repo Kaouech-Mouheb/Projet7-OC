@@ -152,56 +152,47 @@ exports.updateProfil = (req, res) => {
     }
     console.log(profil);
     db.User.findOne({
-        where:{
-            id:id
-        }
-    })
-    .then(() =>{
-        db.User.update( profil,{
-            where:{
-                id:id
-            }
-        })
-        .then(() => {
-            return res.status(200).send({
-                'message': "Publication modifiée"
-            })
-        }).catch(error => res.status(400).json({
-            error
-        }))
-    })
-}
-exports.updateAvatar = (req, res) => {
-    //identification du demandeur
-    let id = utilsJwt.getUserId(req.headers.authorization);
-    models.User.findOne({
             where: {
                 id: id
             }
         })
-        .then(user => {
-            //Vérification que le demandeur est soit l'admin soit le poster (vérif aussi sur le front)
-            if (user.isAdmin == JSON.parse(req.body.Admin)) {
-                console.log('Modif ok pour le post :');
-                //si la requête contienne le nom changer le nom
-                models.User
-                    .update({
-                        avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-                    }, {
-                        where: {
-                            id: id
-                        }
-                    })
-                    .then(() => res.json({
-                        avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-                    }))
-                    .catch(err => res.status(500).json(err))
-
-            } else {
-                res.status(401).json({
-                    'error': 'Utilisateur non autorisé à modifier ce post'
+        .then(() => {
+            db.User.update(profil, {
+                    where: {
+                        id: id
+                    }
                 })
+                .then(() => {
+                    return res.status(200).send({
+                        'message': "Publication modifiée"
+                    })
+                }).catch(error => res.status(400).json({
+                    error
+                }))
+        })
+}
+exports.updateImage = (req, res) => {
+    let id = utilsJwt.getUserId(req.headers.authorization)
+
+    db.User.findOne({
+            where: {
+                id: id
             }
         })
-        .catch(error => res.status(500).json(error));
-}
+        .then(() => {
+            db.User.update({
+                    avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+                }, {
+                    where: {
+                        id: id
+                    }
+                })
+                .then(() => {
+                    return res.status(200).send({
+                        'message': "Publication modifiée"
+                    })
+                }).catch(error => res.status(400).json({
+                    error
+                }))
+        })
+} 

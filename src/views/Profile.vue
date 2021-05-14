@@ -12,7 +12,7 @@
               src="https://cdn.pixabay.com/photo/2020/06/24/19/12/cabbage-5337431_1280.jpg"
             />
           </v-avatar>
-          <p class="ml-3 text-capitalize">{{ username }}</p>
+          <p class="ml-3 text-capitalize">{{ username }} {{lastName}}</p>
         </v-card-title>
       </v-img>
 
@@ -23,7 +23,7 @@
           <v-timeline-item color="deep-purple lighten-1">
             <div>
               <div class="font-weight-normal">
-                <strong class="text-capitalize">{{ username }}</strong>
+                <strong class="text-capitalize">{{ username }} {{lastName}}</strong>
               </div>
               <div v-if="birthday">{{ birthday }}</div>
               <div>{{ email }}</div>
@@ -33,8 +33,14 @@
                 >
               </div>
             </div>
-            <div v-if="!birthday || !bio || !lastname || avatar" class="mt-2">
-              <v-btn fab dark small color="primary" @click="$router.push('/parametre-compte')">
+            <div v-if="!birthday || !lastName || !avatar" class="mt-2">
+              <v-btn
+                fab
+                dark
+                small
+                color="primary"
+                @click="$router.push('/parametre-compte')"
+              >
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
               <small class="text-primary"> complétez votre profil</small>
@@ -62,6 +68,9 @@ export default {
     username() {
       return this.$store.state.auth.user.username;
     },
+    lastName() {
+      return this.$store.state.auth.user.lastName;
+    },
     email() {
       return this.$store.state.auth.user.email;
     },
@@ -74,7 +83,6 @@ export default {
     avatar() {
       return this.$store.state.auth.user.avatar;
     },
- 
   },
   data: () => ({}),
 };

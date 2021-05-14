@@ -76,6 +76,7 @@
         </v-col>
         <v-col cols="8">
           <v-file-input
+            v-if="updateAvatar"
             v-model="infos.avatar"
             @change="onFileChange"
             accept="image/png, image/jpeg, image/bmp"
@@ -85,15 +86,18 @@
             color="#5b25f5"
             label="Avatar"
           ></v-file-input>
+          <v-btn v-else @click="updateAvatar = true" depressed color="primary">
+            Modifier
+          </v-btn>
         </v-col>
         <v-row>
           <v-col cols="4"></v-col>
-          <v-col cols="8">
+          <v-col cols="8" class="text-center">
             <v-img
               :src="url || infos.avatar"
               lazy-src="https://picsum.photos/10/6?image"
               aspect-ratio="1"
-              class="grey lighten-2 image-viewer"
+              class="grey lighten-2 image-viewer mx-auto d-block"
             >
               <template v-slot:placeholder>
                 <v-row class="fill-height ma-0" align="center" justify="center">
@@ -104,11 +108,35 @@
                 </v-row>
               </template>
             </v-img>
+            <v-btn
+              v-if="updateAvatar"
+              depressed
+              color="primary"
+              @click.prevent="updateImage()"
+              class="mt-2"
+              :loading="isLoadingImage"
+            >
+              Changer
+            </v-btn>
+            <v-btn
+              v-if="updateAvatar"
+              depressed
+              color="error"
+              @click="updateAvatar = false"
+              class="mt-2"
+            >
+              Annulez
+            </v-btn>
           </v-col>
         </v-row>
         <v-col>
-          <v-btn @click="updateProfil()" :loading="isLoading"> Validez </v-btn>
+          <v-btn @click.prevent="updateProfil()" :loading="isLoading">
+            Validez
+          </v-btn>
         </v-col>
+        <div class="text-center" v-if="messageError">
+          <small class="text-danger">{{ messageError }}</small>
+        </div>
       </v-row>
       <hr />
       <v-row>
@@ -206,7 +234,7 @@
       <div v-if="supprimerCompte">
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-row>
-            <v-col cols="4">    console.log(this.avatar);
+            <v-col cols="4">
               <small class="text-secondary"
                 >Entrée votre mot de passe pour validez</small
               >
@@ -242,6 +270,7 @@
 <script>
 import moment from "moment";
 import { format, parseISO } from "date-fns";
+import AuthService from "../../service/auth";
 export default {
   created() {
     this.$store.dispatch("auth/GetOneUser");
@@ -249,7 +278,7 @@ export default {
       this.user();
     }, 10);
   },
-  
+
   data: () => ({
     date: format(parseISO(new Date().toISOString()), "yyyy-MM-dd"),
     infos: {
@@ -261,7 +290,9 @@ export default {
       isAdmin: false,
     },
     url: "",
+    updateAvatar: false,
     isLoading: false,
+    isLoadingImage: false,
     supprimerCompte: false,
     passwordModify: false,
     passwordSupprimer: "",
@@ -271,6 +302,7 @@ export default {
     supprimerBtn: "",
     password: "",
     valid: true,
+    messageError: false,
 
     passwordRules: [
       (v) => !!v || "Le mot de passe est requis",
@@ -300,13 +332,7 @@ export default {
       return this.$store.state.auth.user.bio;
     },
     avatar() {
-        return this.$store.state.auth.user.avatar;
-    },
-  },
-
-  watch: {
-    date() {
-      this.dateFormatted = this.formatDate(this.infos.date);
+      return this.$store.state.auth.user.avatar;
     },
   },
 
@@ -314,10 +340,11 @@ export default {
     user() {
       this.infos.username = this.username;
       this.infos.email = this.email;
-      this.infos.avatar = this.avatar || "//ssl.gstatic.com/accounts/ui/avatar_2x.png";
+      this.infos.avatar =
+        this.avatar || "//ssl.gstatic.com/accounts/ui/avatar_2x.png";
       this.infos.bio = this.bio || "";
       this.infos.lastName = this.lastName || "";
-      this.date = this.birthday || ""
+      this.date = this.birthday || "";
     },
     onFileChange() {
       this.url = URL.createObjectURL(this.infos.avatar);
@@ -334,7 +361,6 @@ export default {
       this.isLoading = true;
       return this.$store
         .dispatch("auth/UpdateProfil", infos)
-     
         .catch((error) => (this.messageError = error.response.data.error))
         .finally(() => (this.isLoading = false));
     },
@@ -342,18 +368,10 @@ export default {
       const formData = require("form-data");
       let form = new formData();
       form.append("file", this.infos.avatar);
-    },
-    formatDate(date) {
-      if (!date) return null;
-
-      const [year, month, day] = date.split("-");
-      return `${month}/${day}/${year}`;
-    },
-    parseDate(date) {
-      if (!date) return null;
-
-      const [month, day, year] = date.split("/");
-      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      this.isLoading = true;
+      return AuthService.updateImage(form)
+        .catch((error) => (this.messageError = error.response.data.error))
+        .finally(() => ((this.isLoading = false), (this.updateAvatar = false)));
     },
     validate() {
       this.$refs.form.validate();

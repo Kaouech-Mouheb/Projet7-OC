@@ -13,7 +13,7 @@ router.get('/', auth, userCtrl.getUserAccount);
 router.get('/users', auth, userCtrl.getAllUsers);
 
 router.put('/update-profil', auth, userCtrl.updateProfil);
-//router.put('/update-image', auth, multer, userCtrl.updateImage);
+router.put('/update-image', auth, multer, userCtrl.updateImage);
 
 /* EXPORT */
 module.exports = router;
