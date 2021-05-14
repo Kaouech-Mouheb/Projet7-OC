@@ -191,7 +191,7 @@
                   :prepend-icon="show4 ? 'mdi-eye' : 'mdi-eye-off'"
                   :type="show4 ? 'text' : 'password'"
                   @click:prepend="show4 = !show4"
-                  v-model="password"
+                  v-model="ancienPassword"
                   :rules="passwordRules"
                   label="Mot de passe"
                   required
@@ -209,7 +209,7 @@
                   :prepend-icon="show4 ? 'mdi-eye' : 'mdi-eye-off'"
                   :type="show4 ? 'text' : 'password'"
                   @click:prepend="show4 = !show4"
-                  v-model="password"
+                  v-model="newPassword"
                   :rules="passwordRules"
                   label="Mot de passe"
                   required
@@ -219,14 +219,27 @@
             </v-row>
 
             <v-btn
-              color="green"
+              color="success"
+              :rules="passwordRules"
               :disabled="!valid"
+              :loading="isLoadingPassword"
               class="mr-4 mb-4"
-              @click="validate"
+              @click="updatePassword"
             >
               Validez
             </v-btn>
           </v-form>
+          <div class="text-center" v-if="messageRedirection">
+            <small class="text-success">
+              Le mot de passe est modifié, maintenant vous allez être redirigés
+              automatiquement vers le login
+            </small>
+          </div>
+          <div class="text-center" v-if="passwordMessageError">
+            <small class="text-danger">
+              {{ passwordMessageError }}
+            </small>
+          </div>
         </v-row>
         <hr />
       </div>
@@ -293,14 +306,18 @@ export default {
     updateAvatar: false,
     isLoading: false,
     isLoadingImage: false,
+    isLoadingPassword: false,
     supprimerCompte: false,
     passwordModify: false,
+    messageRedirection: false,
     passwordSupprimer: "",
+    passwordMessageError: "",
     menu1: false,
     show4: false,
     modifierBtn: "",
     supprimerBtn: "",
-    password: "",
+    ancienPassword: "",
+    newPassword: "",
     valid: true,
     messageError: false,
 
@@ -373,11 +390,41 @@ export default {
         .catch((error) => (this.messageError = error.response.data.error))
         .finally(() => ((this.isLoading = false), (this.updateAvatar = false)));
     },
+    updatePassword() {
+      //vérifier les champs
+      this.validate();
+      //attends 10ms puis exécute ce morceaux de code
+      setTimeout(() => {
+        //si les champs sont valide exécute ce code
+        if (this.valid) {
+          this.isLoadingPassword = true;
+          let password = {
+            password: this.ancienPassword,
+            newPassword: this.newPassword,
+          };
+          return AuthService.updatePassword(password)
+            .then(() => {
+              this.loggout();
+            })
+            .catch(
+              (error) => (this.passwordMessageError = error.response.data.error)
+            )
+            .finally(() => (this.isLoadingPassword = false));
+        }
+      }, 10);
+    },
     validate() {
       this.$refs.form.validate();
     },
     close() {
       return window.history.back();
+    },
+    loggout() {
+      localStorage.removeItem("user");
+      localStorage.removeItem("admin");
+      localStorage.removeItem("token");
+      this.$router.push("/login");
+  
     },
   },
 };

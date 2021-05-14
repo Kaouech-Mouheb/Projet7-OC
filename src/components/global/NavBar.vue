@@ -70,7 +70,6 @@
 <script>
 export default {
   created() {
-    console.log(window.location.pathname);
     this.navItem();
   },
   name: "AppNav",
@@ -81,6 +80,15 @@ export default {
     };
   },
   methods: {
+    loggout() {
+      localStorage.removeItem("user");
+      localStorage.removeItem("admin");
+      localStorage.removeItem("token");
+      this.deconnexion = true;
+      this.$router.push("/login");
+    },
+  },
+  watch: {
     navItem() {
       if (
         window.location.pathname == "/login" ||
@@ -88,14 +96,6 @@ export default {
       ) {
         this.deconnexion = true;
       }
-      console.log(this.deconnexion);
-    },
-    loggout() {
-      localStorage.removeItem("user");
-      localStorage.removeItem("admin");
-      localStorage.removeItem("token");
-      this.deconnexion = true;
-      this.$router.push("/login");
     },
   },
 };

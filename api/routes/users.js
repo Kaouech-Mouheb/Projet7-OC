@@ -14,6 +14,9 @@ router.get('/users', auth, userCtrl.getAllUsers);
 
 router.put('/update-profil', auth, userCtrl.updateProfil);
 router.put('/update-image', auth, multer, userCtrl.updateImage);
+router.put('/update-password', auth, multer, userCtrl.updatePassword);
+router.put('/update-all-passowrd', auth, userCtrl.updatePasswordRecuperation)
+
 
 /* EXPORT */
 module.exports = router;

@@ -61,5 +61,17 @@ class AuthService {
             }
         })
     }
+    updatePassword(password) {
+        return axios({
+            method: 'PUT',
+            url: API_URL + "update-password",
+            data: password,
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'Authorization': BearerToken
+            }
+        })
+    }
 }
 export default new AuthService();

@@ -8,7 +8,7 @@ const utilsJwt = require('../utils/jwt.utils');
 
 exports.register = (req, res, next) => {
     // validation de la requête
-    if (!req.body.email || !req.body.password) {
+    if (!req.body.email || !req.body.password || !req.body.username) {
         return res.status(400).send({
             message: "Veuillez remplir toutes les champs"
         });
@@ -195,4 +195,73 @@ exports.updateImage = (req, res) => {
                     error
                 }))
         })
-} 
+}
+
+exports.updatePassword = (req, res) => {
+    let id = utilsJwt.getUserId(req.headers.authorization)
+
+    db.User.findOne({
+        where: {
+            id: id
+        }
+    }).then(user => {
+        //comparer les mots de passe des utilisateur
+        bcrypt.compare(req.body.password, user.password)
+            .then(valid => {
+                if (!valid) {
+                    return res.status(403).json({
+                        error: 'Ancien Mot de passe incorrect'
+                    })
+                }
+                bcrypt.hash(req.body.newPassword, 10)
+                    .then(hash => {
+                        db.User.update({
+                                password: hash,
+                            }, {
+                                where: {
+                                    id: id
+                                }
+                            })
+                            .then(() => {
+                                return res.status(200).send({
+                                    'message': "Mot de passe modifier"
+                                })
+                            }).catch(error => res.status(400).json({
+                                error
+                            }))
+
+                    })
+
+            }).catch(error => res.status(500).json({
+                'Error': error,
+                'message': 'bcryptcompare',
+            }))
+    })
+
+}
+exports.updatePasswordRecuperation = (req, res) => {
+    let id = utilsJwt.getUserId(req.headers.authorization)
+
+    db.User.findOne({
+        where: {
+            id: id
+        }
+    }).then(() => {
+        //comparer les mots de passe des utilisateur
+        db.User.update({
+                password: req.body.newPassword,
+            }, {
+                where: {
+                    id: id
+                }
+            })
+            .then(() => {
+                return res.status(200).send({
+                    'message': "Mot de passe modifier"
+                })
+            }).catch(error => res.status(400).json({
+                error
+            }))
+    })
+
+}

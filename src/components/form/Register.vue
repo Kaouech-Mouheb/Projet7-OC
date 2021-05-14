@@ -129,7 +129,8 @@ export default {
             .catch((error) => {
                this.loading = false;
               this.messageError = error.response.data.error;
-            });
+            })
+            .finally(() => this.loading = false)
         }
       }, 10);
     },
