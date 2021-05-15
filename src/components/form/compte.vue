@@ -287,6 +287,11 @@
             Supprimer
           </v-btn>
         </v-form>
+        <div v-if="deleteMessageError">
+          <small class="text-danger">
+            {{ deleteMessageError }}
+          </small>
+        </div>
       </div>
     </v-card>
   </v-container>
@@ -435,7 +440,10 @@ export default {
       setTimeout(() => {
         if (this.valid) {
           this.isLoadingDelete = true;
-          return AuthService.deleteUser()
+          let password = {
+            password: this.passwordSupprimer,
+          };
+          return AuthService.deleteUser(password)
             .then(() => {
               this.$store.dispatch("auth/Loggout");
               alert("Le compte est supprimé");

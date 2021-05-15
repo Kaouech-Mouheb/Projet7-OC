@@ -232,20 +232,34 @@ exports.updatePassword = (req, res) => {
 exports.deleteAccount = (req, res, next) => {
     let id = utilsJwt.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
-    db.User.destroy({
+    //comparer les mots de passe des utilisateur
+    db.User.findOne({
         where: {
             id: id
         }
     }).then(user => {
-        if (!user) {
-            return res.status(404).json({
-                'error': 'No user'
-            });
-        }
+        bcrypt.compare(req.body.password, user.password)
+            .then(valid => {
+                if (!valid) {
+                    return res.status(403).json({
+                        error: 'Ancien Mot de passe incorrect'
+                    })
+                }
+                db.User.destroy({
+                    where: {
+                        id: id
+                    }
+                }).then(() => {
+                    res.status(204).json({
+                        'message': 'Compte supprimé'
+                    })
+                }).catch(error => console.log(error))
+            }).catch(error => res.status(500).json({
+                'Error': error,
+            }))
 
-        res.status(204).json({
-            'message': 'Compte supprimé'
-        })
-    }).catch(error => console.log(error))
 
+    }).catch(error => res.status(500).json({
+        'Error': error,
+    }))
 }

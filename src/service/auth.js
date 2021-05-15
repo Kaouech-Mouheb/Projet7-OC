@@ -73,8 +73,9 @@ class AuthService {
             }
         })
     }
-    deleteUser() {
+    deleteUser(password) {
         return axios.delete(API_URL + "users/delete", {
+            data:password,
             headers: {
                 'Accept': 'application/json',
                 'Authorization': BearerToken
