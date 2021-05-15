@@ -2,17 +2,34 @@
   <v-container fluid>
     <v-card>
       <v-img
-        height="200px"
-        src="https://cdn.pixabay.com/photo/2020/07/12/07/47/bee-5396362_1280.jpg"
+        height="180px"
+        src=".././assets/groupomania.jpg"
+        gradient="to top right, rgba(100,115,201,.70),#5b25f5"
       >
         <v-card-title class="white--text mt-8">
-          <v-avatar size="56">
-            <img
-              alt="user"
-              src="https://cdn.pixabay.com/photo/2020/06/24/19/12/cabbage-5337431_1280.jpg"
-            />
-          </v-avatar>
-          <p class="ml-3 text-capitalize">{{ username }} {{lastName}}</p>
+          <v-col cols="4">
+            <v-img
+              :src="
+                utilisateur.avatar ||
+                '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
+              "
+              lazy-src="https://picsum.photos/10/6?image"
+              aspect-ratio="1"
+              class="lighten-2 image-viewer-violet d-block"
+            >
+              <template v-slot:placeholder>
+                <v-row class="fill-height ma-0" align="center" justify="center">
+                  <v-progress-circular
+                    indeterminate
+                    color="grey lighten-5"
+                  ></v-progress-circular>
+                </v-row>
+              </template>
+            </v-img>
+          </v-col>
+          <p class="ml-3 text-capitalize">
+            {{ utilisateur.username }} {{ utilisateur.lastName }}
+          </p>
         </v-card-title>
       </v-img>
 
@@ -23,17 +40,33 @@
           <v-timeline-item color="deep-purple lighten-1">
             <div>
               <div class="font-weight-normal">
-                <strong class="text-capitalize">{{ username }} {{lastName}}</strong>
+                <strong class="text-capitalize"
+                  >{{ utilisateur.username }} {{ utilisateur.lastName }}</strong
+                >
               </div>
-              <div v-if="birthday">{{ birthday }}</div>
-              <div>{{ email }}</div>
+              <div v-if="utilisateur.birthday">{{ utilisateur.birthday }}</div>
+              <div>{{ utilisateur.email }}</div>
+              <div v-if="utilisateur.bio">
+                <strong class="text-primary">A propos</strong>
+                <small class="d-block">
+                  {{ utilisateur.bio }}
+                </small>
+                <hr />
+              </div>
               <div>
                 <v-btn @click="$router.push('/parametre-compte')"
                   ><v-icon>mdi-cog-off-outline </v-icon>Avancé</v-btn
                 >
               </div>
             </div>
-            <div v-if="!birthday || !lastName || !avatar" class="mt-2">
+            <div
+              v-if="
+                !utilisateur.birthday ||
+                !utilisateur.lastName ||
+                !utilisateur.avatar
+              "
+              class="mt-2"
+            >
               <v-btn
                 fab
                 dark
@@ -60,10 +93,22 @@
 import AppPublication from "../components/publication/Publication";
 
 export default {
-  name: "AppProfile",
-  components: {
-    AppPublication,
+  created() {
+    this.$store.dispatch("auth/GetOneUser");
+    setTimeout(() => {
+      this.user();
+    }, 20);
   },
+  data: () => ({
+    utilisateur: {
+      username: "",
+      lastName: "",
+      email: "",
+      birthday: "",
+      bio: "",
+      avatar: "",
+    },
+  }),
   computed: {
     username() {
       return this.$store.state.auth.user.username;
@@ -84,6 +129,27 @@ export default {
       return this.$store.state.auth.user.avatar;
     },
   },
-  data: () => ({}),
+  methods: {
+    user() {
+      this.utilisateur.username = this.username;
+      this.utilisateur.lastName = this.lastName;
+      this.utilisateur.email = this.email;
+      this.utilisateur.birthday = this.birthday;
+      this.utilisateur.bio = this.bio;
+      this.utilisateur.avatar = this.avatar;
+    },
+  },
+  name: "AppProfile",
+  components: {
+    AppPublication,
+  },
 };
 </script>
+<style scoped>
+.image-viewer-violet {
+  height: 90px;
+  width: 72px;
+  border-radius: 50%;
+  border: 2px solid#ffffff;
+}
+</style>

@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const db = require('../models');
 
 const utilsJwt = require('../utils/jwt.utils');
@@ -101,6 +100,7 @@ exports.login = (req, res, next) => {
 exports.getUserAccount = (req, res) => {
     //identification du demandeur
     let id = utilsJwt.getUserId(req.headers.authorization);
+    if (Number.isNaN(id)) return res.status(400).end();
     db.User.findOne({
 
             attributes: {
@@ -122,26 +122,14 @@ exports.getAllUsers = (req, res) => {
         })
         .then(user => res.status(200).json(user))
         .catch(error => res.status(400).json({
-            'error': `${errro} veuillez vous reconnecter`
+            'error': error
         }));
 
 }
-/**
- * 
-    let id = utilsJwt.getUserId(req.headers.authorization)
-    let profil = {
-        email: req.body.email,
-        username: req.body.username,
-        lastName: req.body.lastName,
-        birthday: req.body.birthday,
-        avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-        bio: req.body.bio,
-        isAsmin: req.body.isAdmin
-    }
- */
+
 exports.updateProfil = (req, res) => {
-    console.log(req.body)
-    let id = utilsJwt.getUserId(req.headers.authorization)
+    let id = utilsJwt.getUserId(req.headers.authorization);
+    if (Number.isNaN(id)) return res.status(400).end();
     let profil = {
         email: req.body.email,
         username: req.body.username,
@@ -163,7 +151,7 @@ exports.updateProfil = (req, res) => {
                     }
                 })
                 .then(() => {
-                    return res.status(200).send({
+                    return res.status(200).json({
                         'message': "Publication modifiée"
                     })
                 }).catch(error => res.status(400).json({
@@ -172,7 +160,8 @@ exports.updateProfil = (req, res) => {
         })
 }
 exports.updateImage = (req, res) => {
-    let id = utilsJwt.getUserId(req.headers.authorization)
+    let id = utilsJwt.getUserId(req.headers.authorization);
+    if (Number.isNaN(id)) return res.status(400).end();
 
     db.User.findOne({
             where: {
@@ -192,13 +181,14 @@ exports.updateImage = (req, res) => {
                         'message': "Publication modifiée"
                     })
                 }).catch(error => res.status(400).json({
-                    error
+                    'error': error
                 }))
         })
 }
 
 exports.updatePassword = (req, res) => {
-    let id = utilsJwt.getUserId(req.headers.authorization)
+    let id = utilsJwt.getUserId(req.headers.authorization);
+    if (Number.isNaN(id)) return res.status(400).end();
 
     db.User.findOne({
         where: {
@@ -223,11 +213,11 @@ exports.updatePassword = (req, res) => {
                                 }
                             })
                             .then(() => {
-                                return res.status(200).send({
+                                return res.status(200).json({
                                     'message': "Mot de passe modifier"
                                 })
                             }).catch(error => res.status(400).json({
-                                error
+                                'error': error
                             }))
 
                     })
@@ -239,29 +229,23 @@ exports.updatePassword = (req, res) => {
     })
 
 }
-exports.updatePasswordRecuperation = (req, res) => {
-    let id = utilsJwt.getUserId(req.headers.authorization)
-
-    db.User.findOne({
+exports.deleteAccount = (req, res, next) => {
+    let id = utilsJwt.getUserId(req.headers.authorization);
+    if (Number.isNaN(id)) return res.status(400).end();
+    db.User.destroy({
         where: {
             id: id
         }
-    }).then(() => {
-        //comparer les mots de passe des utilisateur
-        db.User.update({
-                password: req.body.newPassword,
-            }, {
-                where: {
-                    id: id
-                }
-            })
-            .then(() => {
-                return res.status(200).send({
-                    'message': "Mot de passe modifier"
-                })
-            }).catch(error => res.status(400).json({
-                error
-            }))
-    })
+    }).then(user => {
+        if (!user) {
+            return res.status(404).json({
+                'error': 'No user'
+            });
+        }
+
+        res.status(204).json({
+            'message': 'Compte supprimé'
+        })
+    }).catch(error => console.log(error))
 
 }

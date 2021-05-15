@@ -72,6 +72,20 @@
       </v-row>
       <v-row>
         <v-col cols="4">
+          <v-subheader>Biographie</v-subheader>
+        </v-col>
+        <v-col cols="8">
+          <v-textarea
+            counter
+            label="Bio"
+            :rules="[(v) => v.length <= 70 || 'Max 70 characters']"
+            v-model="infos.bio"
+            color="#5b25f5"
+          ></v-textarea>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col cols="4">
           <v-subheader>Avatar</v-subheader>
         </v-col>
         <v-col cols="8">
@@ -229,12 +243,7 @@
               Validez
             </v-btn>
           </v-form>
-          <div class="text-center" v-if="messageRedirection">
-            <small class="text-success">
-              Le mot de passe est modifié, maintenant vous allez être redirigés
-              automatiquement vers le login
-            </small>
-          </div>
+
           <div class="text-center" v-if="passwordMessageError">
             <small class="text-danger">
               {{ passwordMessageError }}
@@ -269,11 +278,13 @@
 
           <v-btn
             color="error"
+            :rules="passwordRules"
             :disabled="!valid"
+            :loading="isLoadingDelete"
             class="mr-4 mb-4"
-            @click.prevent="validate"
+            @click="deleteAccompte"
           >
-            Validez
+            Supprimer
           </v-btn>
         </v-form>
       </div>
@@ -289,7 +300,7 @@ export default {
     this.$store.dispatch("auth/GetOneUser");
     setTimeout(() => {
       this.user();
-    }, 10);
+    }, 30);
   },
 
   data: () => ({
@@ -308,10 +319,12 @@ export default {
     isLoadingImage: false,
     isLoadingPassword: false,
     supprimerCompte: false,
+    isLoadingDelete: false,
     passwordModify: false,
     messageRedirection: false,
     passwordSupprimer: "",
     passwordMessageError: "",
+    deleteMessageError: "",
     menu1: false,
     show4: false,
     modifierBtn: "",
@@ -378,6 +391,9 @@ export default {
       this.isLoading = true;
       return this.$store
         .dispatch("auth/UpdateProfil", infos)
+        .then(() => {
+          window.location.reload();
+        })
         .catch((error) => (this.messageError = error.response.data.error))
         .finally(() => (this.isLoading = false));
     },
@@ -405,12 +421,30 @@ export default {
           return AuthService.updatePassword(password)
             .then(() => {
               this.$store.dispatch("auth/Loggout");
-              this.$router.push("/login")
+              this.$router.push("/login");
             })
             .catch(
               (error) => (this.passwordMessageError = error.response.data.error)
             )
             .finally(() => (this.isLoadingPassword = false));
+        }
+      }, 10);
+    },
+    deleteAccompte() {
+      this.validate();
+      setTimeout(() => {
+        if (this.valid) {
+          this.isLoadingDelete = true;
+          return AuthService.deleteUser()
+            .then(() => {
+              this.$store.dispatch("auth/Loggout");
+              alert("Le compte est supprimé");
+              this.$router.push("/login");
+            })
+            .catch((error) => {
+              this.deleteMessageError = error.response.data.error;
+            })
+            .finally(() => (this.isLoadingDelete = false));
         }
       }, 10);
     },
@@ -433,8 +467,8 @@ export default {
   top: 15px;
 }
 .image-viewer {
-  height: 250px;
-  width: 200px;
+  height: 150px;
+  width: 120px;
   border-radius: 50%;
   border: 2px solid gray;
 }

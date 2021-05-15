@@ -1,6 +1,6 @@
 const axios = require('axios').default;
 const API_URL = 'http://localhost:3000/api/auth/';
-const BearerToken =`bearer ${JSON.parse(localStorage.getItem('token'))}`; 
+const BearerToken = `bearer ${JSON.parse(localStorage.getItem('token'))}`;
 class AuthService {
     login(user) {
         return axios
@@ -72,6 +72,14 @@ class AuthService {
                 'Authorization': BearerToken
             }
         })
+    }
+    deleteUser() {
+        return axios.delete(API_URL + "users/delete", {
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': BearerToken
+            },
+        });
     }
 }
 export default new AuthService();
