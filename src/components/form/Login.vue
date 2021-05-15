@@ -89,10 +89,10 @@ export default {
           this.$store
             .dispatch("auth/Login", user)
             .then(() => {
-              this.$router.push("/");
-            })
-            .then(() =>{
               document.location.reload();
+            })
+            .then(() => {
+              this.$router.push("/");
             })
             .catch((error) => {
               this.loading = false;

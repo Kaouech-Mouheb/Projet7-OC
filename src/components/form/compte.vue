@@ -404,7 +404,8 @@ export default {
           };
           return AuthService.updatePassword(password)
             .then(() => {
-              this.loggout();
+              this.$store.dispatch("auth/Loggout");
+              this.$router.push("/login")
             })
             .catch(
               (error) => (this.passwordMessageError = error.response.data.error)
@@ -418,13 +419,6 @@ export default {
     },
     close() {
       return window.history.back();
-    },
-    loggout() {
-      localStorage.removeItem("user");
-      localStorage.removeItem("admin");
-      localStorage.removeItem("token");
-      this.$router.push("/login");
-  
     },
   },
 };

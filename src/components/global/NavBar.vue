@@ -10,7 +10,7 @@
       </h2>
 
       <v-spacer> </v-spacer>
-      <div v-if="deconnexion">
+      <div v-if="!deconnexion">
         <router-link to="/login">
           <span class="connexion" title="click to login">
             <v-icon>mdi-account-arrow-right-outline</v-icon>
@@ -25,7 +25,7 @@
           </span>
         </router-link>
       </div>
-      <div v-if="!deconnexion">
+      <div v-if="deconnexion">
         <span class="connexion" @click.prevent="loggout">
           <v-icon>mdi-power-settings</v-icon>
           Déconnexion
@@ -71,30 +71,33 @@
 export default {
   created() {
     this.navItem();
+    console.log(this.deconnexion);
   },
   name: "AppNav",
   data() {
     return {
       drawer: false,
-      deconnexion: false,
     };
   },
-  methods: {
-    loggout() {
-      localStorage.removeItem("user");
-      localStorage.removeItem("admin");
-      localStorage.removeItem("token");
-      this.deconnexion = true;
-      this.$router.push("/login");
+  computed: {
+    deconnexion() {
+      return this.$store.state.auth.connected;
     },
   },
-  watch: {
+
+  methods: {
+    loggout() {
+      this.$store.dispatch("auth/Loggout");
+      this.$router.push("/login");
+    },
     navItem() {
       if (
         window.location.pathname == "/login" ||
         window.location.pathname == "/register"
       ) {
-        this.deconnexion = true;
+        this.$store.commit("auth/LOGGOUT");
+      } else {
+        this.$store.commit("auth/CONNECTED_SUCCESS");
       }
     },
   },

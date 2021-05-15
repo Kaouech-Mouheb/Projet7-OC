@@ -61,11 +61,23 @@ export const auth = {
                 .catch(error => {
                     return Promise.reject(error)
                 })
-        }
+        },
+        Loggout({
+            commit
+        }) {
+            commit("LOGGOUT");
+            localStorage.removeItem("user");
+            localStorage.removeItem("admin");
+            localStorage.removeItem("token");
+
+        },
     },
     mutations: {
         CONNECTED_SUCCESS(state) {
             state.connected = true;
+        },
+        LOGGOUT(state) {
+            state.connected = false;
         },
         REGISTER_SUCCESS(state) {
             state.register = true
