@@ -9,8 +9,13 @@ const multer = require('../middleware/multer');
 
 // POST //
 router.post('/', auth, multer, publicationCtrl.createPublication);
+router.post('/text', auth, publicationCtrl.createPublicationText);
 
-router.post('/profil', auth, multer, publicationCtrl.createProfil);
+router.get('/', auth, publicationCtrl.getPublications);
+
+/**
+ * 
+ * router.post('/profil', auth, multer, publicationCtrl.createProfil);
 
 // GET //
 router.get('/', auth, publicationCtrl.getAllPublication);
@@ -23,6 +28,7 @@ router.put('/:id', auth, multer, publicationCtrl.modifyPublication);
 
 // DELETE //
 router.delete('/:id', auth, publicationCtrl.deletePublication);
+ */
 
 
 // EXPORT //

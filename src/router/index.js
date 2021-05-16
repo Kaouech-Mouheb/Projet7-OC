@@ -27,18 +27,18 @@ const routes = [{
     // which is lazy-loaded when the route is visited.
     component: () =>
       import( /* webpackChunkName: "about" */ "../components/form/Register.vue"),
-      beforeEnter: (to, from, next) => {
-        // ...
-        if (!JSON.parse(localStorage.getItem('token'))) {
-          next()
-        } else {
-          next({
-            path: '/'
-          })
-        }
+    beforeEnter: (to, from, next) => {
+      // ...
+      if (!JSON.parse(localStorage.getItem('token'))) {
+        next()
+      } else {
+        next({
+          path: '/'
+        })
       }
+    }
   },
-  
+
   {
     path: "/login",
     name: "Login",
@@ -47,16 +47,16 @@ const routes = [{
     // which is lazy-loaded when the route is visited.
     component: () =>
       import( /* webpackChunkName: "about" */ "../components/form/Login.vue"),
-      beforeEnter: (to, from, next) => {
-        // ...
-        if (!JSON.parse(localStorage.getItem('token'))) {
-          next()
-        } else {
-          next({
-            path: '/'
-          })
-        }
+    beforeEnter: (to, from, next) => {
+      // ...
+      if (!JSON.parse(localStorage.getItem('token'))) {
+        next()
+      } else {
+        next({
+          path: '/'
+        })
       }
+    }
   },
   {
     path: "/account",
@@ -66,15 +66,15 @@ const routes = [{
     // which is lazy-loaded when the route is visited.
     component: () =>
       import( /* webpackChunkName: "about" */ "../views/Profile.vue"),
-      beforeEnter: (to, from, next) => {
-        // ...
-        if (JSON.parse(localStorage.getItem('token'))) {
-            next()
-        } else {
-            next({
-                path: '/login'
-            })
-        }
+    beforeEnter: (to, from, next) => {
+      // ...
+      if (JSON.parse(localStorage.getItem('token'))) {
+        next()
+      } else {
+        next({
+          path: '/login'
+        })
+      }
     }
   },
   {
@@ -85,15 +85,33 @@ const routes = [{
     // which is lazy-loaded when the route is visited.
     component: () =>
       import( /* webpackChunkName: "about" */ "../components/form/publication"),
-      beforeEnter: (to, from, next) => {
-        // ...
-        if (JSON.parse(localStorage.getItem('token'))) {
-            next()
-        } else {
-            next({
-                path: '/login'
-            })
-        }
+    beforeEnter: (to, from, next) => {
+      // ...
+      if (JSON.parse(localStorage.getItem('token'))) {
+        next()
+      } else {
+        next({
+          path: '/login'
+        })
+      }
+    }
+  }, {
+    path: "/publication/on",
+    name: "CreatePublication",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import( /* webpackChunkName: "about" */ "../components/publication/OnePublication"),
+    beforeEnter: (to, from, next) => {
+      // ...
+      if (JSON.parse(localStorage.getItem('token'))) {
+        next()
+      } else {
+        next({
+          path: '/login'
+        })
+      }
     }
   },
   {
@@ -104,15 +122,15 @@ const routes = [{
     // which is lazy-loaded when the route is visited.
     component: () =>
       import( /* webpackChunkName: "about" */ "../components/form/compte"),
-      beforeEnter: (to, from, next) => {
-        // ...
-        if (JSON.parse(localStorage.getItem('token'))) {
-            next()
-        } else {
-            next({
-                path: '/login'
-            })
-        }
+    beforeEnter: (to, from, next) => {
+      // ...
+      if (JSON.parse(localStorage.getItem('token'))) {
+        next()
+      } else {
+        next({
+          path: '/login'
+        })
+      }
     }
   },
 ];

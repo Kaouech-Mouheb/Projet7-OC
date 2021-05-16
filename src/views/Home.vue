@@ -59,6 +59,7 @@ export default {
   },
   created() {
     this.$store.dispatch("auth/GetOneUser");
+    this.$store.dispatch("pub/GetPublications");
   },
   computed: {
     resultQuery() {
@@ -87,11 +88,11 @@ export default {
   watch: {
     searchQuery() {
       console.log(this.searchQuery.length);
-      
+
       if (this.isLoading) return;
       //quand on supprimer les saisie de recherche initial le tableaux users
-      if(this.users.length != 0 && this.searchQuery.length == 1){
-        return this.users = []
+      if (this.users.length != 0 && this.searchQuery.length == 1) {
+        return (this.users = []);
       }
       //si nous avons saisie quelque chose arrêt ici la fonction
       if (
@@ -100,7 +101,7 @@ export default {
         this.searchQuery.length == 0
       )
         return;
-      //active le barre de loading 
+      //active le barre de loading
       this.isLoading = true;
       //récupérer les données de l 'api
       return AuthService.getUsers()
@@ -143,12 +144,12 @@ export default {
   .bloc-publication {
     margin-top: -30px;
   }
-  .search-input{
-    position:absolute;
-    top:0px;
+  .search-input {
+    position: absolute;
+    top: 0px;
   }
-   .publication-component{
-     margin-top:35px
-   }
+  .publication-component {
+    margin-top: 35px;
+  }
 }
 </style>

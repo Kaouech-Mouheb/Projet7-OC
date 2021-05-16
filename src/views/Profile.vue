@@ -9,10 +9,7 @@
         <v-card-title class="white--text mt-8">
           <v-col cols="4">
             <v-img
-              :src="
-                utilisateur.avatar ||
-                '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
-              "
+              :src="avatar || '//ssl.gstatic.com/accounts/ui/avatar_2x.png'"
               lazy-src="https://picsum.photos/10/6?image"
               aspect-ratio="1"
               class="lighten-2 image-viewer-violet d-block"
@@ -27,9 +24,7 @@
               </template>
             </v-img>
           </v-col>
-          <p class="ml-3 text-capitalize">
-            {{ utilisateur.username }} {{ utilisateur.lastName }}
-          </p>
+          <p class="ml-3 text-capitalize">{{ username }} {{ lastName }}</p>
         </v-card-title>
       </v-img>
 
@@ -41,15 +36,15 @@
             <div>
               <div class="font-weight-normal">
                 <strong class="text-capitalize"
-                  >{{ utilisateur.username }} {{ utilisateur.lastName }}</strong
+                  >{{ username }} {{ lastName }}</strong
                 >
               </div>
-              <div v-if="utilisateur.birthday">{{ utilisateur.birthday }}</div>
-              <div>{{ utilisateur.email }}</div>
-              <div v-if="utilisateur.bio">
+              <div v-if="birthday">{{ birthday }}</div>
+              <div>{{ email }}</div>
+              <div v-if="bio">
                 <strong class="text-primary">A propos</strong>
                 <small class="d-block">
-                  {{ utilisateur.bio }}
+                  {{ bio }}
                 </small>
                 <hr />
               </div>
@@ -59,14 +54,7 @@
                 >
               </div>
             </div>
-            <div
-              v-if="
-                !utilisateur.birthday ||
-                !utilisateur.lastName ||
-                !utilisateur.avatar
-              "
-              class="mt-2"
-            >
+            <div v-if="!birthday || !lastName || !avatar" class="mt-2">
               <v-btn
                 fab
                 dark
@@ -95,20 +83,7 @@ import AppPublication from "../components/publication/Publication";
 export default {
   created() {
     this.$store.dispatch("auth/GetOneUser");
-    setTimeout(() => {
-      this.user();
-    }, 20);
   },
-  data: () => ({
-    utilisateur: {
-      username: "",
-      lastName: "",
-      email: "",
-      birthday: "",
-      bio: "",
-      avatar: "",
-    },
-  }),
   computed: {
     username() {
       return this.$store.state.auth.user.username;
@@ -129,16 +104,7 @@ export default {
       return this.$store.state.auth.user.avatar;
     },
   },
-  methods: {
-    user() {
-      this.utilisateur.username = this.username;
-      this.utilisateur.lastName = this.lastName;
-      this.utilisateur.email = this.email;
-      this.utilisateur.birthday = this.birthday;
-      this.utilisateur.bio = this.bio;
-      this.utilisateur.avatar = this.avatar;
-    },
-  },
+
   name: "AppProfile",
   components: {
     AppPublication,
@@ -147,9 +113,10 @@ export default {
 </script>
 <style scoped>
 .image-viewer-violet {
-  height: 90px;
+  height: 72px;
   width: 72px;
   border-radius: 50%;
+   vertical-align: middle;
   border: 2px solid#ffffff;
 }
 </style>

@@ -55,6 +55,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 :value="computedDateFormattedMomentjs"
+                 color="#5b25f5"
                 clearable
                 label="Date de naissance"
                 readonly
@@ -302,10 +303,7 @@ import { format, parseISO } from "date-fns";
 import AuthService from "../../service/auth";
 export default {
   created() {
-    this.$store.dispatch("auth/GetOneUser");
-    setTimeout(() => {
-      this.user();
-    }, 30);
+    this.user();
   },
 
   data: () => ({
@@ -396,9 +394,6 @@ export default {
       this.isLoading = true;
       return this.$store
         .dispatch("auth/UpdateProfil", infos)
-        .then(() => {
-          window.location.reload();
-        })
         .catch((error) => (this.messageError = error.response.data.error))
         .finally(() => (this.isLoading = false));
     },
@@ -475,9 +470,10 @@ export default {
   top: 15px;
 }
 .image-viewer {
-  height: 150px;
+  height: 120px;
   width: 120px;
   border-radius: 50%;
   border: 2px solid gray;
+   vertical-align: middle;
 }
 </style>

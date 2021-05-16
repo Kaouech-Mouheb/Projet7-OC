@@ -1,39 +1,37 @@
-'use strict';
-
 const Sequelize = require('sequelize');
 const fs = require("fs");
 
 //impporter les models de la base de donnée
-const models = require('../models');
+const db = require('../models');
 const utils = require('../utils/jwt.utils');
 
 exports.createPublication = (req, res, next) => {
     //identifier le posteur de message
-    let userId = utils.getUserId(req.headers.authorization);
+    let id = utils.getUserId(req.headers.authorization);
+    if (Number.isNaN(id)) return res.status(400).end();
 
     let publication = {
-        UserId: userId,
+        UserId: id,
         content: req.body.content,
         attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     };
-    models.User.findOne({
+    db.User.findOne({
             where: {
-                id: userId
+                id: id
             }
         })
         .then(user => {
             if (!user) {
                 return res.status(400).json({
-                    error: 'utilisateur non trouvé, veuillez vous connectez'
+                    'error': 'utilisateur non trouvé, veuillez vous connectez'
                 })
             }
 
-            return models.Publication
+            return db.Publication
                 .create(publication)
                 .then(pub => {
                     return res.status(201).json({
-                        'user': pub.UserId,
-                        'Post': pub.id
+                        'message': 'Publication publié',
                     })
                 })
                 .catch((error) => {
@@ -49,36 +47,32 @@ exports.createPublication = (req, res, next) => {
             })
         });
 }
-
-exports.createProfil = (req, res, next) => {
+exports.createPublicationText = (req, res, next) => {
     //identifier le posteur de message
-    let userId = utils.getUserId(req.headers.authorization);
+    let id = utils.getUserId(req.headers.authorization);
+    if (Number.isNaN(id)) return res.status(400).end();
 
-    let data = {
-        UserId: userId,
-        bio: req.body.bio,
-        avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    let publication = {
+        UserId: id,
+        content: req.body.content,
     };
-
-    models.User.findOne({
-            attributes: ['id', 'email', 'username'],
+    db.User.findOne({
             where: {
-                id: userId
+                id: id
             }
         })
         .then(user => {
             if (!user) {
                 return res.status(400).json({
-                    error: 'utilisateur non trouvé'
+                    'error': 'utilisateur non trouvé, veuillez vous connectez'
                 })
             }
-            // Création d'une publication
-            return models.Profil
-                .create(data)
+
+            return db.Publication
+                .create(publication)
                 .then(() => {
                     return res.status(201).json({
-                        'user': user,
-                        'Post': 'newPost'
+                        'message': 'Publication publié',
                     })
                 })
                 .catch((error) => {
@@ -91,12 +85,32 @@ exports.createProfil = (req, res, next) => {
         .catch(error => {
             return res.status(500).json({
                 'error': error,
-                'userId': userId
             })
         });
 }
+exports.getPublications = (req, res, next) => {
 
-exports.getAllPublication = (req, res, next) => {
+    db.Publication.findAll({
+            order: Sequelize.literal('updatedAt DESC'),
+            include: [{
+                    model: db.User,
+                    attributes: ['username', 'lastName', 'avatar']
+                },
+                {
+                    model: db.Like,
+                    attributes: ['like', 'dislike']
+                }
+            ]
+        })
+        .then(publications => res.status(200).json(publications))
+        .catch(error => res.status(400).json({
+            'error': "gettallpublication",
+            'error': error
+        }));
+};
+/**
+ * 
+ * exports.getAllPublication = (req, res, next) => {
 
     models.Publication.findAll({
             order: Sequelize.literal('updatedAt DESC'),
@@ -130,8 +144,7 @@ exports.getOnePublication = (req, res, next) => {
             error
         }));
 };
-
-exports.updateAvatar = (req, res) => {
+ * exports.updateAvatar = (req, res) => {
     //identification du demandeur
     let id = utilsJwt.getUserId(req.headers.authorization);
     models.User.findOne({
@@ -260,3 +273,4 @@ exports.deletePublication = (req, res, next) => {
         });
     }
 }
+ */

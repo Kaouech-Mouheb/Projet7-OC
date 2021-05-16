@@ -3,17 +3,16 @@
     <div class="close" title="Fermer">
       <v-btn icon @click="close()"> <v-icon>mdi-close-box</v-icon></v-btn>
     </div>
-  
+
     <div class="row bg-white">
-    <h1 class="h5 text-center mt-2">Publication</h1>
-    <div class="col"><hr></div>
+      <h1 class="h5 text-center mt-2">Publication</h1>
+      <div class="col"><hr /></div>
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-textarea
           :rules="[
             (v) => !!v || 'Ce champs est requis',
-            (v) => v.length <= 25 || 'Max 25 characters',
+            (v) => v.length <= 70 || 'Max 70 characters',
           ]"
-      
           label="Description"
           v-model="description"
           color="#5b25f5"
@@ -81,13 +80,38 @@ export default {
       setTimeout(() => {
         if (this.valid) {
           this.loading = true;
-          const FormData = require("form-data");
-          let form = new FormData();
-          form.append("file", this.image);
-          form.append("content", this.description);
-          PublicationService.postPublication(form);
-          this.clear();
-          this.close();
+          if (this.image) {
+            const FormData = require("form-data");
+            let form = new FormData();
+            form.append("file", this.image);
+            form.append("content", this.description);
+            PublicationService.createPublication(form)
+              .then(() => {
+                this.clear();
+              })
+              .catch((error) => {
+                this.messageError = error.response.data.error;
+              })
+              .finally(() => {
+                this.loading = false;
+                this.close();
+              });
+          } else {
+            let publication = {
+              content: this.description,
+            };
+            PublicationService.createPublicationText(publication)
+              .then(() => {
+                this.clear();
+              })
+              .catch((error) => {
+                this.messageError = error.response.data.error;
+              })
+              .finally(() => {
+                this.loading = false;
+                this.close();
+              });
+          }
         }
       }, 10);
     },
@@ -95,8 +119,8 @@ export default {
 };
 </script>
 <style scoped>
-h1{
-  color:#5b25f5;
+h1 {
+  color: #5b25f5;
 }
 .close-publication {
   position: relative;
