@@ -17,14 +17,10 @@ module.exports = (sequelize, DataTypes) => {
                     allowNull: false,
                 }
             })
-            models.Publication.belongsTo(models.Like, {
-                foreignKey: {
-                    allowNull: false,
-                }
-            })
-         
+            models.Publication.hasMany(models.Like);
+
         }
-        
+
     };
     Publications.init({
         content: {

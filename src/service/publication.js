@@ -37,6 +37,25 @@ class PublicationService {
                 }
             })
     }
+    update(id, description) {
+        return axios({
+            method: 'PUT',
+            url: `${API_URL}/${id}`,
+            data: description,
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': BearerToken
+            }
+        })
+    }
+    delete(id) {
+        return axios.delete(`${API_URL}/${id}`, {
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': BearerToken
+            },
+        });
+    }
 
 }
 export default new PublicationService();

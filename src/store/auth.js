@@ -84,6 +84,11 @@ export const auth = {
         },
         USER_ACCOUNT(state, val) {
             state.user = val
+        },
+        INITIAL_STATE_AUTH(state) {
+            state.connected = false;
+            state.register = false;
+            state.user = null;
         }
 
     }

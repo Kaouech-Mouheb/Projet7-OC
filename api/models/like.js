@@ -12,19 +12,19 @@ module.exports = (sequelize, DataTypes) => {
          */
         static associate(models) {
             // define association here
-            models.Like.hasOne(models.Publication);
+            models.Like.belongsTo(models.Publication, {
+                foreignKey: {
+                    allowNull: false,
+                }
+            })
         }
+
     };
     Likes.init({
         like: {
-            allowNull: true,
+            allowNull: false,
             type: DataTypes.INTEGER,
         },
-        dislike: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        }
-
     }, {
         sequelize,
         modelName: 'Like',

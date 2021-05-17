@@ -8,6 +8,7 @@ import {
 import {
     pub
 } from './publication';
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({

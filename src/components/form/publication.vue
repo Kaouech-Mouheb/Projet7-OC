@@ -72,7 +72,7 @@ export default {
       return window.history.back();
     },
     clear() {
-      this.image = "";
+      this.image = null;
       this.description = "";
     },
     validate() {
@@ -85,7 +85,7 @@ export default {
             let form = new FormData();
             form.append("file", this.image);
             form.append("content", this.description);
-            PublicationService.createPublication(form)
+            return PublicationService.createPublication(form)
               .then(() => {
                 this.clear();
               })
@@ -100,7 +100,7 @@ export default {
             let publication = {
               content: this.description,
             };
-            PublicationService.createPublicationText(publication)
+            return PublicationService.createPublicationText(publication)
               .then(() => {
                 this.clear();
               })

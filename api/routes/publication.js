@@ -13,23 +13,9 @@ router.post('/text', auth, publicationCtrl.createPublicationText);
 
 router.get('/', auth, publicationCtrl.getPublications);
 
-/**
- * 
- * router.post('/profil', auth, multer, publicationCtrl.createProfil);
+router.put('/:id', auth, publicationCtrl.updatePublication);
 
-// GET //
-router.get('/', auth, publicationCtrl.getAllPublication);
-
-// GET ONE //
-router.get('/:id', auth, publicationCtrl.getOnePublication);
-
-// PUT //
-router.put('/:id', auth, multer, publicationCtrl.modifyPublication);
-
-// DELETE //
 router.delete('/:id', auth, publicationCtrl.deletePublication);
- */
-
 
 // EXPORT //
 

@@ -88,6 +88,8 @@ export default {
   methods: {
     loggout() {
       this.$store.dispatch("auth/Loggout");
+      this.$store.commit("auth/INITIAL_STATE_AUTH");
+       this.$store.commit("pub/INITIAL_STATE_PUB");
       this.$router.push("/login");
     },
     navItem() {

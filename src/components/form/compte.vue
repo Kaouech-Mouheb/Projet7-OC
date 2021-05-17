@@ -55,7 +55,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 :value="computedDateFormattedMomentjs"
-                 color="#5b25f5"
+                color="#5b25f5"
                 clearable
                 label="Date de naissance"
                 readonly
@@ -86,8 +86,30 @@
         </v-col>
       </v-row>
       <v-row>
+        <v-col>
+          <v-btn
+            @click.prevent="updateProfil()"
+            :loading="isLoading"
+            color="success"
+          >
+            Validez
+          </v-btn>
+        </v-col>
+      </v-row>
+      <hr />
+      <v-row>
         <v-col cols="4">
           <v-subheader>Avatar</v-subheader>
+        </v-col>
+        <v-col cols="8" class="text-center">
+          <v-btn
+            @click="updateAvatar = true"
+            depressed
+            color="primary"
+            v-if="!updateAvatar"
+          >
+            Modifier
+          </v-btn>
         </v-col>
         <v-col cols="8">
           <v-file-input
@@ -101,9 +123,6 @@
             color="#5b25f5"
             label="Avatar"
           ></v-file-input>
-          <v-btn v-else @click="updateAvatar = true" depressed color="primary">
-            Modifier
-          </v-btn>
         </v-col>
         <v-row>
           <v-col cols="4"></v-col>
@@ -113,22 +132,18 @@
               lazy-src="https://picsum.photos/10/6?image"
               aspect-ratio="1"
               class="grey lighten-2 image-viewer mx-auto d-block"
-            >
-              <template v-slot:placeholder>
-                <v-row class="fill-height ma-0" align="center" justify="center">
-                  <v-progress-circular
-                    indeterminate
-                    color="grey lighten-5"
-                  ></v-progress-circular>
-                </v-row>
-              </template>
-            </v-img>
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="4"></v-col>
+          <v-col cols="8" class="text-center">
             <v-btn
               v-if="updateAvatar"
               depressed
               color="primary"
               @click.prevent="updateImage()"
-              class="mt-2"
+              class="mr-4"
               :loading="isLoadingImage"
             >
               Changer
@@ -144,11 +159,6 @@
             </v-btn>
           </v-col>
         </v-row>
-        <v-col>
-          <v-btn @click.prevent="updateProfil()" :loading="isLoading">
-            Validez
-          </v-btn>
-        </v-col>
         <div class="text-center" v-if="messageError">
           <small class="text-danger">{{ messageError }}</small>
         </div>
@@ -474,6 +484,6 @@ export default {
   width: 120px;
   border-radius: 50%;
   border: 2px solid gray;
-   vertical-align: middle;
+  vertical-align: middle;
 }
 </style>

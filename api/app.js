@@ -8,6 +8,7 @@ var db = require('./models');
 
 const userRoutes = require('./routes/users');
 const publicationRoutes = require('./routes/publication');
+const likeRoutes = require('./routes/like');
 
 
 
@@ -34,6 +35,7 @@ app.use(bodyParser.json());
 //  ENDPOINTS CHEMIN D'ACCES //
 app.use('/api/auth', userRoutes);
 app.use('/api/publications', publicationRoutes);
+app.use('/api/likes', likeRoutes);
 
 
 // catch 404 and forward to error handler

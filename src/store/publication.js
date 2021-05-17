@@ -3,8 +3,7 @@ import PublicationService from '../service/publication';
 export const pub = {
     namespaced: true,
     state: {
-        publications: null
-
+        publications: null,
     },
     actions: {
         GetPublications({
@@ -23,6 +22,9 @@ export const pub = {
     mutations: {
         PUBLICATIONS_SUCCESS(state, val) {
             state.publications = val;
-        }
+        },
+        INITIAL_STATE_PUB(state){
+            state.publications = null
+        },
     }
 };

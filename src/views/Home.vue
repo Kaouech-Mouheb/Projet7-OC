@@ -1,8 +1,53 @@
 <template>
   <div class="container">
-    <div class="row">
+    <v-progress-linear
+      indeterminate
+      color="#5b25f5"
+      v-if="waiting"
+    ></v-progress-linear>
+    <div class="row" v-if="loadingPage">
       <div class="col-md-8 publication-component">
-        <AppPublication />
+        <v-card>
+          <div class="mb-4">
+            <div class="p-4 d-flex">
+              <div class="mr-4">
+                <v-img
+                  :src="
+                    userAvatar || '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
+                  "
+                  lazy-src="https://picsum.photos/10/6?image"
+                  aspect-ratio="1"
+                  class="avatar"
+                  alt="Cinque Terre"
+                />
+              </div>
+              <div class="create-pub col">
+                <router-link to="/create-publication">
+                  <v-icon color="primary"
+                    >mdi-pencil-box-multiple-outline</v-icon
+                  >
+
+                  <small class="text-secondary">
+                    Créer une publication ..</small
+                  >
+                </router-link>
+              </div>
+            </div>
+          </div>
+        </v-card>
+        <v-progress-linear
+          indeterminate
+          color="#5b25f5"
+          v-if="waiting"
+        ></v-progress-linear>
+        <div v-if="loadingPublication">
+          <AppPublication />
+        </div>
+        <div v-else class="text-center">
+          <small class="text-secondary"
+            >Aucune Publication pour le moment</small
+          >
+        </div>
       </div>
       <div class="col-md-1 small-screen"></div>
       <div class="col-md-3">
@@ -58,8 +103,19 @@ export default {
     AppPublication,
   },
   created() {
-    this.$store.dispatch("auth/GetOneUser");
-    this.$store.dispatch("pub/GetPublications");
+    this.$store.dispatch("auth/GetOneUser").then(() => {
+      this.waiting = false;
+      this.loadingPage = true;
+    });
+    this.$store
+      .dispatch("pub/GetPublications")
+      .then(() => {
+        this.waiting = false;
+        this.loadingPublication = true;
+      })
+      .catch(() => {
+        this.loadingPublication = false;
+      });
   },
   computed: {
     resultQuery() {
@@ -74,17 +130,22 @@ export default {
         return this.users;
       }
     },
+    userAvatar() {
+      return this.$store.state.auth.user.avatar;
+    },
   },
   data: () => ({
     switch1: true,
     switch2: true,
+    waiting: true,
     isLoading: false,
+    loadingPage: false,
+    loadingPublication: false,
     messageError: "",
     searchQuery: "",
     users: [],
   }),
 
-  methods: {},
   watch: {
     searchQuery() {
       console.log(this.searchQuery.length);
@@ -118,6 +179,16 @@ export default {
 <style scoped>
 .text-indigo {
   color: #5b25f5;
+}
+.avatar {
+  vertical-align: middle;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+a {
+  color: grey !important;
+  text-decoration: none;
 }
 
 @media (max-width: 576px) {

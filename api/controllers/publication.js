@@ -29,7 +29,7 @@ exports.createPublication = (req, res, next) => {
 
             return db.Publication
                 .create(publication)
-                .then(pub => {
+                .then(() => {
                     return res.status(201).json({
                         'message': 'Publication publié',
                     })
@@ -89,17 +89,19 @@ exports.createPublicationText = (req, res, next) => {
         });
 }
 exports.getPublications = (req, res, next) => {
+    let id = utils.getUserId(req.headers.authorization);
+    if (Number.isNaN(id)) return res.status(400).end();
 
     db.Publication.findAll({
             order: Sequelize.literal('updatedAt DESC'),
             include: [{
                     model: db.User,
                     attributes: ['username', 'lastName', 'avatar']
-                },
-                {
+                }, {
                     model: db.Like,
-                    attributes: ['like', 'dislike']
+                    attributes: ['like']
                 }
+
             ]
         })
         .then(publications => res.status(200).json(publications))
@@ -108,169 +110,71 @@ exports.getPublications = (req, res, next) => {
             'error': error
         }));
 };
-/**
- * 
- * exports.getAllPublication = (req, res, next) => {
+exports.updatePublication = (req, res) => {
+    let id = utils.getUserId(req.headers.authorization);
+    if (Number.isNaN(id)) return res.status(400).end();
+    let publication = {
+        content: req.body.content,
+    }
 
-    models.Publication.findAll({
-            order: Sequelize.literal('updatedAt DESC'),
-            include: {
-                model: models.User,
-                attributes: ['username', 'avatar']
-            }
-        })
-        .then(publications => res.status(200).json(publications))
-        .catch(error => res.status(400).json({
-            'error': "gettallpublication",
-            'error': error
-        }));
-};
-
-// récupérer une seul publication
-exports.getOnePublication = (req, res, next) => {
-    models.Publication.findOne({
+    db.Publication.findOne({
+        where: {
+            id: req.params.id
+        }
+    }).then(pub => {
+        //vérifier si vous êtes le propiétaire de cette publication
+        if (pub.UserId != id) {
+            return res.status(409).json({
+                'error': "vous n'êtes pas autorisé à modifier cette publication"
+            })
+        }
+        //modifier la publication en question 
+        return db.Publication.update(publication, {
             where: {
                 id: req.params.id
-            },
-            include: {
-                model: models.User,
-                attributes: ['username', 'avatar']
             }
-        })
-        .then(publication => {
-            res.status(200).json(publication);
-        })
-        .catch(error => res.status(400).json({
-            error
-        }));
-};
- * exports.updateAvatar = (req, res) => {
-    //identification du demandeur
-    let id = utilsJwt.getUserId(req.headers.authorization);
-    models.User.findOne({
-            where: {
-                id: id
-            }
-        })
-        .then(user => {
-            //Vérification que le demandeur est soit l'admin soit le poster (vérif aussi sur le front)
-            if (user.isAdmin == JSON.parse(req.body.Admin)) {
-                console.log('Modif ok pour le post :');
-                //si la requête contienne le nom changer le nom
-                models.User
-                    .update({
-                        avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
-                    }, {
-                        where: {
-                            id: id
-                        }
-                    })
-                    .then(() => res.json({
-                        avatar: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-                    }))
-                    .catch(err => res.status(500).json(err))
 
-            } else {
-                res.status(401).json({
-                    'error': 'Utilisateur non autorisé à modifier ce post'
-                })
-            }
+        }).then(() => {
+            return res.status(200).send({
+                'message': "publication modifiée"
+            })
         })
-        .catch(error => res.status(500).json(error));
+    }).catch(error => res.status(400).json({
+        'error': error
+    }))
+
 }
 
-//modifier la publication
-exports.modifyPublication = (req, res) => {
-    // récupérer les valeur envoyer par le backend
-    if (req.file) {
-        let publication = {
-            title: req.body.title,
-            content: req.body.content,
-            attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        }
-        //trouver la publication en question
-        models.Publication.findOne({
+
+exports.deletePublication = (req, res, next) => {
+    let id = utils.getUserId(req.headers.authorization);
+    if (Number.isNaN(id)) return res.status(400).end();
+
+    db.Publication.findOne({
             where: {
                 id: req.params.id
             }
         }).then(pub => {
-            //récupérer le nom du fichier 
-            const filename = pub.attachment.split('/images/')[1];
-            //suprimer le fichier du serveur
-            fs.unlink(`images/${filename}`, () => {
-                //modifier la publication en question 
-                models.Publication.update(publication, {
-                    where: {
-                        id: req.params.id
-                    }
-                }).then(() => {
-                    return res.status(200).send({
-                        'message': "Publication modifiée"
-                    })
-                }).catch(error => res.status(400).json({
-                    error
-                }))
-            })
-
-        }).catch(error => res.status(400).json({
-            error
-        }))
-    } else {
-        let publication = {
-            title: req.body.title,
-            content: req.body.content,
-        }
-        //trouver la publication en question
-        models.Publication.findOne({
-            where: {
-                id: req.params.id
+            if (pub.UserId != id) {
+                return res.status(409).json({
+                    'error': "vous n'êtes pas autorisé à modifier cette publication"
+                })
             }
-        }).then(() => {
-            //modifier la publication en question 
-            models.Publication.update(publication, {
+            return db.Publication.destroy({
                 where: {
                     id: req.params.id
                 }
-
             }).then(() => {
                 return res.status(200).send({
-                    'message': "Publication modifiée"
+                    ' message': "Publication supprimée"
                 })
-            })
-        }).catch(error => res.status(400).json({
-            error
-        }))
-    }
-
-}
-exports.deletePublication = (req, res, next) => {
-    try {
-        models.Publication.findOne({
-            where: {
-                id: req.params.id
-            }
-        }).then(publication => {
-            //récupérer le nom du fichier 
-            const filename = publication.attachment.split('/images/')[1];
-            //supprimer le fichier du dossier image
-            fs.unlink(`images/${filename}`, () => {
-                models.Publication.sequelize.query(
-                    `DELETE Publications, Likes FROM Publications INNER JOIN Likes ON Publications.id = Likes.PublicationId WHERE Publications.id = ${req.params.id}`
-                ).then(() => {
-                    return res.status(200).send({
-                        ' message': "Publication supprimée"
-                    })
-                }).catch(error => res.status(400).json({
-                    error
-                }))
-
-            })
+            }).catch(error => res.status(403).json({
+                'error': error
+            }))
         })
-    } catch (err) {
-        console.log(err);
-        return res.status(500).json({
-            err
-        });
-    }
+        .catch(error => res.status(500).json({
+            'error': error
+        }))
+
+
 }
- */
