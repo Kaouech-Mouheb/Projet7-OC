@@ -92,7 +92,7 @@
             <div class="row">
               <div class="col-md-2">
                 <img
-                  :src="publication.User.avatar"
+                  :src="publication.User.avatar || '//ssl.gstatic.com/accounts/ui/avatar_2x.png'"
                   class="rounded-circle-user"
                   alt="Cinque Terre"
                 />

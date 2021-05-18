@@ -1,14 +1,14 @@
 <template>
   <div>
     <!--section toutes les publications-->
-    <div v-for="publication in this.Publications" :key="publication.id">
+    <div v-for="pub in this.Publications" :key="pub.id">
       <v-card :loading="loading" class="mx-auto mt-4">
         <v-card-text class="card">
           <div class="row">
             <div class="col-md-2">
               <img
                 :src="
-                  publication.User.avatar ||
+                  pub.User.avatar ||
                   '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
                 "
                 class="avatar"
@@ -17,46 +17,43 @@
             </div>
             <div class="col">
               <small class="text-capitalize"
-                >{{ publication.User.username }}
-                {{ publication.User.lastName }}</small
+                >{{ pub.User.username }}
+                {{ pub.User.lastName }}</small
               >
               <small class="text-primary d-block"
                 >Publié a
                 {{
-                  new Date(publication.createdAt).toLocaleTimeString()
+                  new Date(pub.createdAt).toLocaleTimeString()
                 }}</small
               >
             </div>
           </div>
           <div
-            @click="$router.push(`/publication/${publication.id}`)"
+            @click="$router.push(`/publication/${pub.id}`)"
             class="content-publication"
             title="click"
           >
             <v-card-text>
-              {{ publication.content }}
+              {{ pub.content }}
             </v-card-text>
             <v-img
-              v-if="publication.attachment"
+              v-if="pub.attachment"
               height="250"
-              :src="publication.attachment"
+              :src="pub.attachment"
             ></v-img>
           </div>
-          <v-card-actions class="bg-violet">
+          <v-card-actions class="content-notification">
             <v-spacer></v-spacer>
 
             <div>
-              <small class="text-light">
-                {{Likes(publication.Likes)}}
-              </small>
-
-              <v-btn icon @click="liked(publication.id)">
+              <small> {{ Likes(pub.Likes) }} (Likes) </small>
+              <v-btn icon @click="liked(pub.id)">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="24px"
                   viewBox="0 0 24 24"
                   width="24px"
-                  fill="white"
+                  fill="#646464"
                 >
                   <path d="M0 0h24v24H0V0z" fill="none" />
                   <path
@@ -77,36 +74,39 @@ export default {
   name: "AppPublication",
   created() {
     this.$store.dispatch("pub/GetPublications");
+    console.log(this.Publications);
   },
-  mounted() {
-    console.log(this.Likes, this.Publications);
-  },
+
   data: () => ({
     loading: false,
     selection: 1,
     profile: true,
+    messageLike: "",
    
   }),
   computed: {
     Publications() {
       return this.$store.state.pub.publications;
     },
+    UserId() {
+      return JSON.parse(localStorage.getItem("user"));
+    },
   },
   methods: {
     liked(id) {
-      
-      this.like = 1
       let val = {
         like: 1,
       };
       LikeService.addLike(id, val)
-        .then((res) => {
-          console.log(res.data.likes.like);
+        .then(() => {
+          this.$nextTick(function () {
+            this.$store.dispatch("pub/GetPublications");
+          });
         })
         .catch((error) => console.log(error));
     },
     Likes(val) {
-      let like =0
+      let like = 0;
       val.map((el) => {
         like = like + el.like;
       });
@@ -129,9 +129,8 @@ export default {
   border-radius: 50px;
   background: #f8f8f8;
 }
-.bg-violet {
-  background: #b69efa;
-  padding: 1px;
+.content-notification {
+  border-top: 2px solid rgb(206, 206, 206);
 }
 .content-publication {
   cursor: pointer;
@@ -142,6 +141,7 @@ export default {
   background: rgb(238, 238, 238, 0.2);
   color: black;
 }
+
 @media (max-width: 576px) {
   .mx-auto {
     max-width: 99%;

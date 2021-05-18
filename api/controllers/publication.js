@@ -150,31 +150,27 @@ exports.deletePublication = (req, res, next) => {
     let id = utils.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
 
-    db.Publication.findOne({
-            where: {
+        db.Publication.findOne({
+            where:{
                 id: req.params.id
             }
-        }).then(pub => {
+        }).then(pub =>{
             if (pub.UserId != id) {
                 return res.status(409).json({
-                    'error': "vous n'êtes pas autorisé à modifier cette publication"
+                    'error': "vous n'êtes pas autorisé à supprimer cette publication"
                 })
             }
             return db.Publication.destroy({
-                where: {
+                where:{
                     id: req.params.id
                 }
-            }).then(() => {
-                return res.status(200).send({
-                    ' message': "Publication supprimée"
+            })
+            .then(() =>{
+                res.status(204).json({
+                    'message': 'publication supprimé'
                 })
-            }).catch(error => res.status(403).json({
-                'error': error
-            }))
-        })
-        .catch(error => res.status(500).json({
-            'error': error
-        }))
+            }).catch(error => res.json({error}))
+        }).catch(error => res.json({error}))
 
 
 }

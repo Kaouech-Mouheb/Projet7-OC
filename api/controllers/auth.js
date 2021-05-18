@@ -229,6 +229,7 @@ exports.updatePassword = (req, res) => {
     })
 
 }
+
 exports.deleteAccount = (req, res, next) => {
     let id = utilsJwt.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();

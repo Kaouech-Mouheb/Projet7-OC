@@ -13,9 +13,9 @@ module.exports = (sequelize, DataTypes) => {
         static associate(models) {
             // define association here
             models.Like.belongsTo(models.Publication, {
-                foreignKey: {
-                    allowNull: false,
-                }
+                onDelete: 'cascade', 
+                foreignKey: { allowNull: false },    //   <-------------
+                hooks: true
             })
         }
 

@@ -17,7 +17,10 @@ module.exports = (sequelize, DataTypes) => {
                     allowNull: false,
                 }
             })
-            models.Publication.hasMany(models.Like);
+            models.Publication.hasMany(models.Like,{
+                onDelete: 'cascade',
+                hooks: true
+            });
 
         }
 
