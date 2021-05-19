@@ -191,7 +191,7 @@ export default {
   position: absolute;
   right: 2px;
   top: 15px;
-  z-index: 100;
+  z-index: 2;
 }
 .container-pub {
   position: relative;

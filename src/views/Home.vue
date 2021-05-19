@@ -177,6 +177,9 @@ export default {
 };
 </script>
 <style scoped>
+.small-screen{
+  z-index: 1;
+}
 .text-indigo {
   color: #5b25f5;
 }

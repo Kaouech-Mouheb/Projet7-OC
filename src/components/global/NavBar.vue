@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="nav-bar">
     <v-app-bar color="#5b25f5" dark>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
@@ -10,6 +10,99 @@
       </h2>
 
       <v-spacer> </v-spacer>
+      <div v-if="deconnexion">
+        <span class="notification" @click="notification = notification ? false: true"
+          ><v-icon>mdi-bell</v-icon>
+          </span
+        >
+        <div class="notification-champ" v-if="notification">
+          <div class="notification-hover">
+            <img
+              src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+              alt=""
+              class="img-fluid avatar"
+            />
+            <small>Kaouech Mouheb</small>
+            <small class="d-block"
+              >à publier une publication a 11h 30 minutes</small
+            >
+            <hr />
+          </div>
+          <div class="notification-hover">
+            <img
+              src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+              alt=""
+              class="img-fluid avatar"
+            />
+            <small>Kaouech Mouheb</small>
+            <small class="d-block"
+              >à publier une publication a 11h 30 minutes</small
+            >
+            <hr />
+          </div>
+          <div class="notification-hover">
+            <img
+              src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+              alt=""
+              class="img-fluid avatar"
+            />
+            <small>Kaouech Mouheb</small>
+            <small class="d-block"
+              >à publier une publication a 11h 30 minutes</small
+            >
+            <hr />
+          </div>
+          <div class="notification-hover">
+            <img
+              src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+              alt=""
+              class="img-fluid avatar"
+            />
+            <small>Kaouech Mouheb</small>
+            <small class="d-block"
+              >à publier une publication a 11h 30 minutes</small
+            >
+            <hr />
+          </div>
+          <div>
+            <img
+              src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+              alt=""
+              class="img-fluid avatar"
+            />
+            <small>Kaouech Mouheb</small>
+            <small class="d-block"
+              >à publier une publication a 11h 30 minutes</small
+            >
+            <hr />
+          </div>
+          <div>
+            <img
+              src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+              alt=""
+              class="img-fluid avatar"
+            />
+            <small>Kaouech Mouheb</small>
+            <small class="d-block"
+              >à publier une publication a 11h 30 minutes</small
+            >
+            <hr />
+          </div>
+          <div>
+            <img
+              src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+              alt=""
+              class="img-fluid avatar"
+            />
+            <small>Kaouech Mouheb</small>
+            <small class="d-block"
+              >à publier une publication a 11h 30 minutes</small
+            >
+            <hr />
+          </div>
+        </div>
+      </div>
+
       <div v-if="!deconnexion">
         <router-link to="/login">
           <span class="connexion" title="click to login">
@@ -77,6 +170,7 @@ export default {
   data() {
     return {
       drawer: false,
+      notification: false,
     };
   },
   computed: {
@@ -89,7 +183,7 @@ export default {
     loggout() {
       this.$store.dispatch("auth/Loggout");
       this.$store.commit("auth/INITIAL_STATE_AUTH");
-       this.$store.commit("pub/INITIAL_STATE_PUB");
+      this.$store.commit("pub/INITIAL_STATE_PUB");
       this.$router.push("/login");
     },
     navItem() {
@@ -123,6 +217,47 @@ a {
 }
 .connexion:first-of-type {
   margin-right: 5px;
+}
+.notification {
+  cursor: pointer;
+  margin-right: 10px;
+  position: relative;
+}
+.notification:hover {
+  opacity: 0.7;
+}
+.notification-champ {
+  position: absolute;
+  padding: 10px;
+  top: 50px;
+  right: 10px;
+  background: #ffffff;
+  color: rgb(0, 0, 0);
+  width: 250px;
+  z-index: 10;
+  box-shadow: 0px 5px 12px 8px rgba(187, 187, 187, 0.75);
+  -webkit-box-shadow: 0px 5px 12px 8px rgba(187, 187, 187, 0.75);
+  -moz-box-shadow: 0px 5px 12px 8px rgba(187, 187, 187, 0.75);
+  max-height: 300px;
+  overflow: auto;
+}
+.notification-hover:hover{
+  background: rgb(235, 235, 235);
+  cursor:pointer
+}
+.notification-champ small {
+  font-size: 0.7em;
+  color: rgb(65, 65, 65);
+}
+.avatar {
+  vertical-align: middle;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+.nav-bar {
+  z-index: 100;
 }
 @media (max-width: 576px) {
   .title-groupomania {
