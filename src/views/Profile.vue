@@ -81,74 +81,76 @@
         </v-card>
       </v-row>
 
-      <div v-for="publication in this.Publications" :key="publication.id">
+      <div v-for="pub in this.Publications" :key="pub.id">
         <v-card
-          :loading="loading"
           class="mx-auto mt-4"
-          @click="$router.push(`/publication/${publication.id}`)"
-          v-if="publication.UserId === UserId"
+          v-if="pub.UserId === UserId"
         >
-          <v-card-text>
+          <v-card-text class="card">
             <div class="row">
               <div class="col-md-2">
                 <img
-                  :src="publication.User.avatar || '//ssl.gstatic.com/accounts/ui/avatar_2x.png'"
-                  class="rounded-circle-user"
+                  :src="
+                    pub.User.avatar ||
+                    '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
+                  "
+                  class="avatar"
                   alt="Cinque Terre"
                 />
               </div>
               <div class="col">
                 <small class="text-capitalize"
-                  >{{ publication.User.username }}
-                  {{ publication.User.lastName }}</small
+                  >{{ pub.User.username }} {{ pub.User.lastName }}</small
                 >
                 <small class="text-primary d-block"
                   >Publié a
-                  {{
-                    new Date(publication.createdAt).toLocaleTimeString()
-                  }}</small
+                  {{ new Date(pub.createdAt).toLocaleTimeString() }}</small
                 >
               </div>
             </div>
-          </v-card-text>
-          <v-divider class="mx-4"></v-divider>
-          <v-card-text>
-            {{ publication.content }}
-          </v-card-text>
-          <v-img
-            v-if="publication.attachment"
-            height="250"
-            :src="publication.attachment"
-          ></v-img>
-          <v-card-actions class="bg-violet">
-            <v-spacer></v-spacer>
-
-            <div>
-              <small class="text-light"> {{ publication.like }} (like) </small>
-
-              <v-btn icon @click="liked(publication.id, publication.like)">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="24px"
-                  viewBox="0 0 24 24"
-                  width="24px"
-                  fill="white"
-                >
-                  <path d="M0 0h24v24H0V0z" fill="none" />
-                  <path
-                    d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"
-                  />
-                </svg>
-              </v-btn>
+            <div
+              @click="$router.push(`/publication/${pub.id}`)"
+              class="content-publication"
+              title="click"
+            >
+              <v-card-text>
+                {{ pub.content }}
+              </v-card-text>
+              <v-img
+                v-if="pub.attachment"
+                height="250"
+                :src="pub.attachment"
+              ></v-img>
             </div>
-          </v-card-actions>
+            <v-card-actions class="content-notification">
+              <v-spacer></v-spacer>
+
+              <div>
+                <small> {{ Likes(pub.Likes) }} (Likes) </small>
+                <v-btn icon @click="liked(pub.id)">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 0 24 24"
+                    width="24px"
+                    fill="#646464"
+                  >
+                    <path d="M0 0h24v24H0V0z" fill="none" />
+                    <path
+                      d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"
+                    />
+                  </svg>
+                </v-btn>
+              </div>
+            </v-card-actions>
+          </v-card-text>
         </v-card>
       </div>
     </div>
   </v-container>
 </template>
 <script>
-import PublicationService from "../service/publication";
+import LikeService from "../service/like";
 export default {
   created() {
     this.$store.dispatch("auth/GetOneUser");
@@ -185,15 +187,26 @@ export default {
     },
   },
   methods: {
-    liked(id, like) {
+    liked(id) {
       let val = {
-        like: like + 1,
+        like: 1,
       };
-      PublicationService.update(id, val)
+      LikeService.addLike(id, val)
         .then(() => {
-          console.log("liked");
+          this.$nextTick(function () {
+            this.$store.dispatch("pub/GetPublications");
+          });
         })
         .catch((error) => console.log(error));
+    },
+    Likes(val) {
+      let like = 0;
+      val.map((el) => {
+        like = like + el.like;
+      });
+
+      console.log(like);
+      return like;
     },
   },
 
@@ -212,26 +225,27 @@ a {
   color: grey !important;
   text-decoration: none;
 }
-.rounded-circle-user {
-  border-radius: 50%;
-  border: 2px solid grey;
-  height: 50px;
-  width: 50px;
+.avatar {
   vertical-align: middle;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
 }
 .create-pub {
   padding-top: 17px;
   border-radius: 50px;
   background: #f8f8f8;
 }
-.bg-violet {
-  background: #b69efa;
-  padding: 1px;
+.content-notification {
+  border-top: 2px solid rgb(206, 206, 206);
 }
-
-@media (max-width: 576px) {
-  .mx-auto {
-    max-width: 99%;
-  }
+.content-publication {
+  cursor: pointer;
+  border-top: 2px solid rgb(206, 206, 206);
+  margin-top: 7px;
+}
+.content-publication:hover {
+  background: rgb(238, 238, 238, 0.2);
+  color: black;
 }
 </style>

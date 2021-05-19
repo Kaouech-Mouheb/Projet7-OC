@@ -2,7 +2,15 @@
   <div>
     <!--section toutes les publications-->
     <div v-for="pub in this.Publications" :key="pub.id">
-      <v-card :loading="loading" class="mx-auto mt-4">
+      <v-card
+        :loading="loading"
+        class="mx-auto mt-4"
+        v-if="
+        multimedia == true && text == false ? pub.attachment: false||
+        text == true && multimedia == false ? !pub.attachment :false||
+        multimedia == true && text == true ? pub: false
+        "
+      >
         <v-card-text class="card">
           <div class="row">
             <div class="col-md-2">
@@ -17,18 +25,15 @@
             </div>
             <div class="col">
               <small class="text-capitalize"
-                >{{ pub.User.username }}
-                {{ pub.User.lastName }}</small
+                >{{ pub.User.username }} {{ pub.User.lastName }}</small
               >
               <small class="text-primary d-block"
                 >Publié a
-                {{
-                  new Date(pub.createdAt).toLocaleTimeString()
-                }}</small
+                {{ new Date(pub.createdAt).toLocaleTimeString() }}</small
               >
             </div>
           </div>
-          <div
+          <div 
             @click="$router.push(`/publication/${pub.id}`)"
             class="content-publication"
             title="click"
@@ -72,6 +77,7 @@
 import LikeService from "../../service/like";
 export default {
   name: "AppPublication",
+  props: ["multimedia", "text"],
   created() {
     this.$store.dispatch("pub/GetPublications");
     console.log(this.Publications);
@@ -82,7 +88,6 @@ export default {
     selection: 1,
     profile: true,
     messageLike: "",
-   
   }),
   computed: {
     Publications() {

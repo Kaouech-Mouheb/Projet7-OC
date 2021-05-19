@@ -41,7 +41,7 @@
           v-if="waiting"
         ></v-progress-linear>
         <div v-if="loadingPublication">
-          <AppPublication />
+          <AppPublication :multimedia="multimedia" :text="text" />
         </div>
         <div v-else class="text-center">
           <small class="text-secondary"
@@ -77,13 +77,13 @@
         <v-col class="switch-small">
           <div class="text-indigo mt-small-4">Forum</div>
           <v-switch
-            v-model="switch1"
+            v-model="multimedia"
             color="indigo"
             flat
             label="Multimédia"
           ></v-switch>
           <v-switch
-            v-model="switch2"
+            v-model="text"
             color="indigo"
             flat
             label="Text"
@@ -135,8 +135,8 @@ export default {
     },
   },
   data: () => ({
-    switch1: true,
-    switch2: true,
+    multimedia: true,
+    text: true,
     waiting: true,
     isLoading: false,
     loadingPage: false,
