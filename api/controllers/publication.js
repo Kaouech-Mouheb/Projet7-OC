@@ -100,6 +100,10 @@ exports.getPublications = (req, res, next) => {
                 }, {
                     model: db.Like,
                     attributes: ['like']
+                }, {
+                    model: db.Comment,
+                    attributes: ['id', 'comment', 'createdAt', 'updatedAt', 'UserId', 'PublicationId', 'avatar', 'username', 'lastName']
+
                 }
 
             ]
@@ -150,27 +154,31 @@ exports.deletePublication = (req, res, next) => {
     let id = utils.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
 
-        db.Publication.findOne({
-            where:{
-                id: req.params.id
-            }
-        }).then(pub =>{
-            if (pub.UserId != id) {
-                return res.status(409).json({
-                    'error': "vous n'êtes pas autorisé à supprimer cette publication"
-                })
-            }
-            return db.Publication.destroy({
-                where:{
+    db.Publication.findOne({
+        where: {
+            id: req.params.id
+        }
+    }).then(pub => {
+        if (pub.UserId != id) {
+            return res.status(409).json({
+                'error': "vous n'êtes pas autorisé à supprimer cette publication"
+            })
+        }
+        return db.Publication.destroy({
+                where: {
                     id: req.params.id
                 }
             })
-            .then(() =>{
+            .then(() => {
                 res.status(204).json({
                     'message': 'publication supprimé'
                 })
-            }).catch(error => res.json({error}))
-        }).catch(error => res.json({error}))
+            }).catch(error => res.json({
+                error
+            }))
+    }).catch(error => res.json({
+        error
+    }))
 
 
 }

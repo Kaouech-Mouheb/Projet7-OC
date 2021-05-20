@@ -9,6 +9,7 @@ var db = require('./models');
 const userRoutes = require('./routes/users');
 const publicationRoutes = require('./routes/publication');
 const likeRoutes = require('./routes/like');
+const commentRoutes = require('./routes/comment');
 
 
 
@@ -36,7 +37,7 @@ app.use(bodyParser.json());
 app.use('/api/auth', userRoutes);
 app.use('/api/publications', publicationRoutes);
 app.use('/api/likes', likeRoutes);
-
+app.use('/api/comments', commentRoutes)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

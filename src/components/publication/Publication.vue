@@ -6,14 +6,18 @@
         :loading="loading"
         class="mx-auto mt-4"
         v-if="
-        multimedia == true && text == false ? pub.attachment: false||
-        text == true && multimedia == false ? !pub.attachment :false||
-        multimedia == true && text == true ? pub: false
+          multimedia == true && text == false
+            ? pub.attachment
+            : false || (text == true && multimedia == false)
+            ? !pub.attachment
+            : false || (multimedia == true && text == true)
+            ? pub
+            : false
         "
       >
         <v-card-text class="card">
           <div class="row">
-            <div class="col-md-2">
+            <div class="col-md-1">
               <img
                 :src="
                   pub.User.avatar ||
@@ -33,7 +37,7 @@
               >
             </div>
           </div>
-          <div 
+          <div
             @click="$router.push(`/publication/${pub.id}`)"
             class="content-publication"
             title="click"
@@ -48,8 +52,12 @@
             ></v-img>
           </div>
           <v-card-actions class="content-notification">
-            <v-spacer></v-spacer>
-
+            <div class="commentaire-titre">
+              <small class="commentaire-icon">
+                {{ pub.Comments.length }} (commentaires)
+              </small>
+              <v-icon> mdi-message-outline </v-icon>
+            </div>
             <div>
               <small> {{ Likes(pub.Likes) }} (Likes) </small>
               <v-btn icon @click="liked(pub.id)">
@@ -68,6 +76,118 @@
               </v-btn>
             </div>
           </v-card-actions>
+          <v-col class="commentaire">
+            <small class="d-block">Toutes les commentaires ..</small>
+            <div v-for="commentaire in pub.Comments" :key="commentaire.id">
+              <div class="list-commentaire">
+                <div class="row">
+                  <div class="col-md-2">
+                    <div class="text-center">
+                      <img
+                        src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
+                        alt=""
+                        class="img-fluid avatar-commentaire"
+                      />
+                      <small>{{ commentaire.username }}</small>
+                    </div>
+                  </div>
+                  <div class="col-md-10 champs-commentaire">
+                    <small class="">{{ commentaire.comment }}</small>
+                    <v-btn
+                      @click="deleteCommit(commentaire.PublicationId)"
+                      class="supprimer"
+                      icon
+                    >
+                      <v-icon>mdi-trash-can-outline</v-icon></v-btn
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </v-col>
+          <hr />
+          <div class="container bg-white" v-if="pub.Comments.length > 0">
+            <!----commentaire-->
+            <div v-for="comment in pub.Comments" :key="comment.id">
+              <div v-if="comment.UserId == UserId" class="col">
+                <small class="text-success">
+                  Vous avez publier un commentaire .. !
+                </small>
+              </div>
+
+              <div class="row" v-else>
+                <div class="text-center col-md-2 col-sm-1">
+                  <img
+                    :src="
+                      pub.User.avatar ||
+                      '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
+                    "
+                    alt=""
+                    class="img-fluid avatar-commentaire"
+                  />
+                  <small class="text-capitalize d-block"
+                    >{{ pub.User.username }} {{ pub.User.lastName }}</small
+                  >
+                </div>
+
+                <div class="col-md-9 col-sm-10">
+                  <v-text-field
+                    color="#5b25f5"
+                    append-outer-icon="mdi-send"
+                    @click:append-outer="
+                      sendCommentaire(
+                        pub.id,
+                        pub.User.avatar,
+                        pub.User.lastName,
+                        pub.User.username
+                      )
+                    "
+                    v-model="commentaire"
+                    :rules="[(v) => v.length <= 50 || 'Max 50 characters']"
+                    :loading="commentaireLoading"
+                    counter="50"
+                    hint="Veuillez ne pas dépasser 50 characters"
+                    label="Ajouter un commentaire ..!"
+                  ></v-text-field>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" v-else>
+            <div class="text-center col-md-2">
+              <img
+                :src="
+                  pub.User.avatar ||
+                  '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
+                "
+                alt=""
+                class="img-fluid avatar-commentaire"
+              />
+              <small class="text-capitalize d-block"
+                >{{ pub.User.username }} {{ pub.User.lastName }}</small
+              >
+            </div>
+            <div class="col">
+              <v-text-field
+                color="#5b25f5"
+                append-outer-icon="mdi-send"
+                @click:append-outer="
+                  sendCommentaire(
+                    pub.id,
+                    pub.User.avatar,
+                    pub.User.lastName,
+                    pub.User.username
+                  )
+                "
+                v-model="commentaire"
+                :rules="[(v) => v.length <= 50 || 'Max 50 characters']"
+                :loading="commentaireLoading"
+                counter="50"
+                hint="Veuillez ne pas dépasser 50 characters"
+                label="Ajouter un commentaire ..!"
+              ></v-text-field>
+            </div>
+          </div>
         </v-card-text>
       </v-card>
     </div>
@@ -75,6 +195,7 @@
 </template>
 <script>
 import LikeService from "../../service/like";
+import CommentaireService from "../../service/commentaire";
 export default {
   name: "AppPublication",
   props: ["multimedia", "text"],
@@ -88,6 +209,11 @@ export default {
     selection: 1,
     profile: true,
     messageLike: "",
+    messageCommentaire: "",
+
+    commentaire: "",
+
+    commentaireLoading: false,
   }),
   computed: {
     Publications() {
@@ -109,6 +235,39 @@ export default {
           });
         })
         .catch((error) => console.log(error));
+    },
+
+    sendCommentaire(id, avatar, lastName, username) {
+      let commentaire = {
+        comment: this.commentaire,
+        lastName: lastName,
+        avatar: avatar,
+        username: username,
+      };
+      this.commentaireLoading = true;
+      return CommentaireService.addCommentaire(id, commentaire)
+        .then((res) => {
+          console.log(res.data);
+          this.messageCommentaire = res.data.comment;
+          this.$nextTick(function () {
+            this.$store.dispatch("pub/GetPublications");
+            this.commentaire = "";
+          });
+        })
+        .catch((error) => {
+          console.log(error.response.data.error);
+        })
+        .finally(() => (this.commentaireLoading = false));
+    },
+    deleteCommit(id) {
+      return CommentaireService.delete(id)
+        .then((res) => {
+          console.log(res.data);
+          this.$nextTick(function () {
+            this.$store.dispatch("pub/GetPublications");
+          });
+        })
+        .catch((error) => console.log(error.response.data.error));
     },
     Likes(val) {
       let like = 0;
@@ -146,10 +305,43 @@ export default {
   background: rgb(238, 238, 238, 0.2);
   color: black;
 }
-
+.avatar-commentaire {
+  vertical-align: middle;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+.commentaire {
+  background: rgb(238, 238, 238);
+  max-height: 400px;
+  overflow: auto;
+}
+.commentaire-titre {
+  margin-right: 20px;
+}
+.champs-commentaire {
+  height: 62px;
+  overflow: auto;
+  font-size: 0.9em;
+  position: relative;
+}
+.supprimer {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+.list-commentaire {
+  background: rgb(255, 255, 255);
+  color: black;
+  padding: 5px;
+  margin-bottom: 5px;
+  border-radius: 1em;
+}
 @media (max-width: 576px) {
   .mx-auto {
     max-width: 99%;
   }
 }
 </style>
+//ssl.gstatic.com/accounts/ui/avatar_2x.png

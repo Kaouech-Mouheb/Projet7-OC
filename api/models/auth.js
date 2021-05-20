@@ -19,6 +19,10 @@ module.exports = (sequelize, DataTypes) => {
                 onDelete: 'cascade',
                 hooks: true
             });
+            models.User.hasMany(models.Comment, {
+                onDelete: 'cascade',
+                hooks: true
+            });
 
         }
     };
