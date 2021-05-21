@@ -11,96 +11,52 @@
 
       <v-spacer> </v-spacer>
       <div v-if="deconnexion">
-        <span class="notification" @click="notification = notification ? false: true"
+        <span
+          class="notification"
+          @click="notification = notification ? false : true"
           ><v-icon>mdi-bell</v-icon>
-          </span
-        >
-        <div class="notification-champ" v-if="notification">
-          <div class="notification-hover">
-            <img
-              src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-              alt=""
-              class="img-fluid avatar"
-            />
-            <small>Kaouech Mouheb</small>
-            <small class="d-block"
-              >à publier une publication a 11h 30 minutes</small
-            >
-            <hr />
+        </span>
+        <!----notification--->
+
+        <div v-if="notification">
+          <div v-if="publications.length > 0" class="notification-champ">
+            <div v-for="publication in publications" :key="publication.id">
+              <div
+                class="notification-hover"
+                @click="$router.push(`/publication/${publication.id}`), notification = false"
+              >
+                <img
+                  :src="
+                    publication.User.avatar ||
+                    '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
+                  "
+                  alt=""
+                  class="img-fluid avatar"
+                />
+                <small
+                  >{{ publication.User.username }}
+                  {{ publication.User.lastName }}</small
+                >
+                <small class="d-block text-primary">
+                  {{ new Date(publication.createdAt).toLocaleTimeString() }}
+                  à publier
+                </small>
+                <small class="d-block notification-content">
+                  {{ publication.content }}
+                </small>
+              </div>
+              <hr />
+            </div>
           </div>
-          <div class="notification-hover">
-            <img
-              src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-              alt=""
-              class="img-fluid avatar"
-            />
-            <small>Kaouech Mouheb</small>
-            <small class="d-block"
-              >à publier une publication a 11h 30 minutes</small
-            >
-            <hr />
-          </div>
-          <div class="notification-hover">
-            <img
-              src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-              alt=""
-              class="img-fluid avatar"
-            />
-            <small>Kaouech Mouheb</small>
-            <small class="d-block"
-              >à publier une publication a 11h 30 minutes</small
-            >
-            <hr />
-          </div>
-          <div class="notification-hover">
-            <img
-              src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-              alt=""
-              class="img-fluid avatar"
-            />
-            <small>Kaouech Mouheb</small>
-            <small class="d-block"
-              >à publier une publication a 11h 30 minutes</small
-            >
-            <hr />
-          </div>
-          <div>
-            <img
-              src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-              alt=""
-              class="img-fluid avatar"
-            />
-            <small>Kaouech Mouheb</small>
-            <small class="d-block"
-              >à publier une publication a 11h 30 minutes</small
-            >
-            <hr />
-          </div>
-          <div>
-            <img
-              src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-              alt=""
-              class="img-fluid avatar"
-            />
-            <small>Kaouech Mouheb</small>
-            <small class="d-block"
-              >à publier une publication a 11h 30 minutes</small
-            >
-            <hr />
-          </div>
-          <div>
-            <img
-              src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-              alt=""
-              class="img-fluid avatar"
-            />
-            <small>Kaouech Mouheb</small>
-            <small class="d-block"
-              >à publier une publication a 11h 30 minutes</small
-            >
-            <hr />
+          <div v-else>
+            <div class="notification-champ">
+              <div class="notification-hover">
+                <small class="d-block"> aucune notification </small>
+              </div>
+            </div>
           </div>
         </div>
+        <!----notification--->
       </div>
 
       <div v-if="!deconnexion">
@@ -166,11 +122,16 @@ export default {
     this.navItem();
     console.log(this.deconnexion);
   },
+  mounted() {
+    this.publications = this.$store.state.pub.publications;
+    console.log(this.publications);
+  },
   name: "AppNav",
   data() {
     return {
       drawer: false,
       notification: false,
+      publications: null,
     };
   },
   computed: {
@@ -241,9 +202,9 @@ a {
   max-height: 300px;
   overflow: auto;
 }
-.notification-hover:hover{
+.notification-hover:hover {
   background: rgb(235, 235, 235);
-  cursor:pointer
+  cursor: pointer;
 }
 .notification-champ small {
   font-size: 0.7em;
@@ -258,6 +219,12 @@ a {
 }
 .nav-bar {
   z-index: 100;
+}
+.notification-content {
+  text-overflow: ellipsis;
+  padding: 2px;
+  background: rgb(243, 243, 243);
+  border-radius: 2px;
 }
 @media (max-width: 576px) {
   .title-groupomania {
