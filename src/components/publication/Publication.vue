@@ -17,7 +17,7 @@
       >
         <v-card-text class="card">
           <div class="row">
-            <div class="col-md-1">
+            <div class="col-md-2">
               <img
                 :src="
                   pub.User.avatar ||
@@ -76,35 +76,36 @@
               </v-btn>
             </div>
           </v-card-actions>
-          <v-col class="commentaire">
+          <div class="commentaire">
             <small class="d-block">Toutes les commentaires ..</small>
             <div v-for="commentaire in pub.Comments" :key="commentaire.id">
               <div class="list-commentaire">
-                <div class="row">
-                  <div class="col-md-2">
-                    <div class="text-center">
-                      <img
-                        src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-                        alt=""
-                        class="img-fluid avatar-commentaire"
-                      />
-                      <small>{{ commentaire.username }}</small>
-                    </div>
-                  </div>
-                  <div class="col-md-10 champs-commentaire">
-                    <small class="">{{ commentaire.comment }}</small>
-                    <v-btn
-                      @click="deleteCommit(commentaire.PublicationId)"
-                      class="supprimer"
-                      icon
-                    >
-                      <v-icon>mdi-trash-can-outline</v-icon></v-btn
-                    >
-                  </div>
+                <div>
+                  <img
+                    :src="
+                      commentaire.avatar ||
+                      '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
+                    "
+                    alt=""
+                    class="img-fluid avatar-commentaire"
+                  />
+                  <small class="username">{{ commentaire.username }}</small>
+                </div>
+
+                <div class="champs-commentaire">
+                  <small class="">{{ commentaire.comment }}</small
+                  >S
+                  <v-btn
+                    @click="deleteCommit(commentaire.PublicationId)"
+                    class="supprimer"
+                    icon
+                  >
+                    <v-icon>mdi-trash-can-outline</v-icon></v-btn
+                  >
                 </div>
               </div>
             </div>
-          </v-col>
+          </div>
           <hr />
           <div class="container bg-white" v-if="pub.Comments.length > 0">
             <!----commentaire-->
@@ -313,7 +314,6 @@ export default {
   margin-right: 5px;
 }
 .commentaire {
-  background: rgb(238, 238, 238);
   max-height: 400px;
   overflow: auto;
 }
@@ -332,16 +332,71 @@ export default {
   top: 5px;
 }
 .list-commentaire {
-  background: rgb(255, 255, 255);
+  width: 100%;
+  padding: 2% 2% 0;
+  display: flex;
   color: black;
   padding: 5px;
   margin-bottom: 5px;
   border-radius: 1em;
 }
+.commentaire {
+  width: 100%;
+  padding: 0 2%;
+}
+
+.champs-commentaire {
+  background: rgb(240, 240, 240);
+  width: 90%;
+  color: rgb(58, 58, 58);
+  margin-left: 5px;
+  padding: 20px 5px 5px;
+  border-radius: 1em;
+}
+.username {
+  position: absolute;
+  z-index: 100;
+  font-weight: bold;
+  left: 82px;
+}
+
 @media (max-width: 576px) {
   .mx-auto {
     max-width: 99%;
   }
+  .commentaire {
+    width: 100%;
+    padding: 0 2%;
+  }
+  .list-commentaire {
+    width: 100%;
+    padding: 2% 2% 0;
+    display: flex;
+    position: rela;
+  }
+  .champs-commentaire {
+    background: rgb(240, 240, 240);
+    width: 80%;
+    color: rgb(58, 58, 58);
+    margin-left: 5px;
+    padding-top: 20px;
+    border-radius: 1em;
+  }
+  .username {
+    position: absolute;
+    z-index: 100;
+    font-weight: bold;
+    left: 72px;
+  }
+}
+@media (min-width: 577px) {
+  .list-commentaire {
+    position: relative;
+  }
+  .username {
+    position: absolute;
+    left: 52px;
+    top: 10px;
+  }
 }
 </style>
-//ssl.gstatic.com/accounts/ui/avatar_2x.png
