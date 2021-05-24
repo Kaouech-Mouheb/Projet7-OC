@@ -23,8 +23,13 @@ export const pub = {
         PUBLICATIONS_SUCCESS(state, val) {
             state.publications = val;
         },
-        INITIAL_STATE_PUB(state){
-            state.publications = null
+        INITIAL_STATE_PUB(state) {
+
+            let initial = {
+                publications: false,
+
+            }
+            Object.assign(state, initial)
         },
     }
 };

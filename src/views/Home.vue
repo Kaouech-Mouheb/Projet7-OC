@@ -13,13 +13,14 @@
               <div class="mr-4">
                 <v-img
                   :src="
-                    userAvatar || '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
+                    User.avatar || '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
                   "
                   lazy-src="https://picsum.photos/10/6?image"
                   aspect-ratio="1"
-                  class="avatar"
+                  class="avatar d-block"
                   alt="Cinque Terre"
                 />
+                 <small class="text-secondary text-center text-capitalize">{{User.username}} {{User.lastName}}</small>
               </div>
               <div class="create-pub col">
                 <router-link to="/create-publication">
@@ -44,7 +45,7 @@
           <AppPublication :multimedia="multimedia" :text="text" />
         </div>
         <div v-else class="text-center">
-          <small class="text-secondary"
+          <small
             >Aucune Publication pour le moment</small
           >
         </div>
@@ -59,6 +60,7 @@
             :search-input.sync="searchQuery"
             color="#5b25f5"
             prepend-icon="mdi-account-search"
+            autocomplete="off"
           ></v-text-field>
           <div v-if="searchQuery" class="bg-white">
             <div v-for="item in resultQuery" :key="item.id">
@@ -130,8 +132,8 @@ export default {
         return this.users;
       }
     },
-    userAvatar() {
-      return this.$store.state.auth.user.avatar;
+    User() {
+      return this.$store.state.auth.user;
     },
   },
   data: () => ({
@@ -192,6 +194,11 @@ export default {
 a {
   color: grey !important;
   text-decoration: none;
+}
+.create-pub{
+  background: rgb(240, 240, 240);
+  border-radius: 1em;
+  font-weight: bold;
 }
 
 @media (max-width: 576px) {

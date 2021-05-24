@@ -96,7 +96,7 @@ exports.getPublications = (req, res, next) => {
             order: Sequelize.literal('updatedAt DESC'),
             include: [{
                     model: db.User,
-                    attributes: ['username', 'lastName', 'avatar']
+                    attributes: ['username', 'lastName', 'avatar', 'id']
                 }, {
                     model: db.Like,
                     attributes: ['like']

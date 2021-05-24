@@ -114,17 +114,22 @@ exports.getUserAccount = (req, res) => {
             'error': error
         }));
 }
-exports.getAllUsers = (req, res) => {
-    db.User.findAll({
+exports.getProfil = (req, res) => {
+    //identification du demandeur
+    let id = utilsJwt.getUserId(req.headers.authorization);
+    if (Number.isNaN(id)) return res.status(400).end();
+    db.User.findOne({
+
             attributes: {
                 exclude: ["password"]
             },
-        })
-        .then(user => res.status(200).json(user))
+            where: {
+                id: req.params.id
+            }
+        }).then(user => res.status(200).json(user))
         .catch(error => res.status(400).json({
             'error': error
         }));
-
 }
 
 exports.updateProfil = (req, res) => {
@@ -153,6 +158,29 @@ exports.updateProfil = (req, res) => {
                 .then(() => {
                     return res.status(200).json({
                         'message': "Publication modifiée"
+                    })
+                }).catch(error => res.status(400).json({
+                    error
+                }))
+        })
+}
+exports.addAdmin = (req, res) => {
+    let id = utilsJwt.getUserId(req.headers.authorization);
+    if (Number.isNaN(id)) return res.status(400).end();
+    db.User.findOne({
+            where: {
+                id: id
+            }
+        })
+        .then(() => {
+            db.User.update(req.body.isAdmin, {
+                    where: {
+                        id: id
+                    }
+                })
+                .then(() => {
+                    return res.status(200).json({
+                        'message': "Félicitations, désormez vous êtes l'administrateur du groupe"
                     })
                 }).catch(error => res.status(400).json({
                     error

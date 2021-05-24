@@ -16,8 +16,8 @@
         "
       >
         <v-card-text class="card">
-          <div class="row">
-            <div class="col-md-2">
+          <div class="d-flex" @click="getAccount(pub.User.id)">
+            <div class="mr-3">
               <img
                 :src="
                   pub.User.avatar ||
@@ -27,7 +27,7 @@
                 alt="Cinque Terre"
               />
             </div>
-            <div class="col">
+            <div>
               <small class="text-capitalize"
                 >{{ pub.User.username }} {{ pub.User.lastName }}</small
               >
@@ -93,10 +93,9 @@
                 </div>
 
                 <div class="champs-commentaire">
-                  <small class="">{{ commentaire.comment }}</small
-                  >S
-                  <v-btn
-                    @click="deleteCommit(commentaire.PublicationId)"
+                  <small class="">{{ commentaire.comment }}</small>
+                  <v-btn v-if="commentaire.UserId == UserId"
+                    @click="deleteCommit(commentaire.PublicationId, commentaire.id)"
                     class="supprimer"
                     icon
                   >
@@ -107,65 +106,18 @@
             </div>
           </div>
           <hr />
-          <div class="container bg-white" v-if="pub.Comments.length > 0">
-            <!----commentaire-->
-            <div v-for="comment in pub.Comments" :key="comment.id">
-              <div v-if="comment.UserId == UserId" class="col">
-                <small class="text-success">
-                  Vous avez publier un commentaire .. !
-                </small>
-              </div>
 
-              <div class="row" v-else>
-                <div class="text-center col-md-2 col-sm-1">
-                  <img
-                    :src="
-                      pub.User.avatar ||
-                      '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
-                    "
-                    alt=""
-                    class="img-fluid avatar-commentaire"
-                  />
-                  <small class="text-capitalize d-block"
-                    >{{ pub.User.username }} {{ pub.User.lastName }}</small
-                  >
-                </div>
-
-                <div class="col-md-9 col-sm-10">
-                  <v-text-field
-                    color="#5b25f5"
-                    append-outer-icon="mdi-send"
-                    @click:append-outer="
-                      sendCommentaire(
-                        pub.id,
-                        pub.User.avatar,
-                        pub.User.lastName,
-                        pub.User.username
-                      )
-                    "
-                    v-model="commentaire"
-                    :rules="[(v) => v.length <= 50 || 'Max 50 characters']"
-                    :loading="commentaireLoading"
-                    counter="50"
-                    hint="Veuillez ne pas dépasser 50 characters"
-                    label="Ajouter un commentaire ..!"
-                  ></v-text-field>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row" v-else>
+          <div class="row">
             <div class="text-center col-md-2">
               <img
                 :src="
-                  pub.User.avatar ||
-                  '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
+                  User.avatar || '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
                 "
                 alt=""
                 class="img-fluid avatar-commentaire"
               />
               <small class="text-capitalize d-block"
-                >{{ pub.User.username }} {{ pub.User.lastName }}</small
+                >{{ User.username }} {{ User.lastName }}</small
               >
             </div>
             <div class="col">
@@ -175,17 +127,19 @@
                 @click:append-outer="
                   sendCommentaire(
                     pub.id,
-                    pub.User.avatar,
-                    pub.User.lastName,
-                    pub.User.username
+                    User.avatar,
+                    User.lastName,
+                    User.username
                   )
                 "
-                v-model="commentaire"
-                :rules="[(v) => v.length <= 50 || 'Max 50 characters']"
                 :loading="commentaireLoading"
-                counter="50"
-                hint="Veuillez ne pas dépasser 50 characters"
+                counter="70"
+                hint="Veuillez ne pas dépasser 70 characters"
                 label="Ajouter un commentaire ..!"
+                clearable
+                id="commentaire"
+                maxlength="70"
+                autocomplete="off"
               ></v-text-field>
             </div>
           </div>
@@ -211,15 +165,16 @@ export default {
     profile: true,
     messageLike: "",
     messageCommentaire: "",
-
-    commentaire: "",
-
     commentaireLoading: false,
   }),
   computed: {
     Publications() {
       return this.$store.state.pub.publications;
     },
+    User() {
+      return this.$store.state.auth.user;
+    },
+
     UserId() {
       return JSON.parse(localStorage.getItem("user"));
     },
@@ -237,10 +192,14 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-
+    getAccount(id){
+      return this.$store.dispatch("auth/GetUserById", id)
+      .then(() => this.$router.push(`/userAccount/${id}`))
+      .catch(error => console.log(error))
+    },
     sendCommentaire(id, avatar, lastName, username) {
       let commentaire = {
-        comment: this.commentaire,
+        comment: document.getElementById("commentaire").value,
         lastName: lastName,
         avatar: avatar,
         username: username,
@@ -249,19 +208,23 @@ export default {
       return CommentaireService.addCommentaire(id, commentaire)
         .then((res) => {
           console.log(res.data);
-          this.messageCommentaire = res.data.comment;
           this.$nextTick(function () {
             this.$store.dispatch("pub/GetPublications");
-            this.commentaire = "";
+             document.getElementById("commentaire").value = ""
           });
         })
         .catch((error) => {
-          console.log(error.response.data.error);
+          this.messageCommentaire = error.response.data.error;
+          console.log(error.response.data.id);
+          this.commentaireId = error.response.data.id;
         })
         .finally(() => (this.commentaireLoading = false));
     },
-    deleteCommit(id) {
-      return CommentaireService.delete(id)
+    deleteCommit(paramsId, id) {
+      let commentaire = {
+        id: id,
+      }
+      return CommentaireService.delete(paramsId, commentaire)
         .then((res) => {
           console.log(res.data);
           this.$nextTick(function () {

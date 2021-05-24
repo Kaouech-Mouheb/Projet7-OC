@@ -12,13 +12,8 @@ exports.comment = function (req, res) {
                 PublicationId: JSON.parse(req.params.id)
             }
         })
-        .then(comment => {
-            if (comment) {
-                return res.status(409).json({
-                    'error': 'vous avez dêja postulé un commentaire pour ce poste',
-                    'id': comment.id
-                })
-            }
+        .then(() => {
+
             db.Comment.create({
                     PublicationId: JSON.parse(req.params.id),
                     UserId: id,
@@ -56,7 +51,8 @@ exports.deleteComment = function (req, res) {
             db.Comment.destroy({
                     where: {
                         UserId: id,
-                        PublicationId: JSON.parse(req.params.id)
+                        PublicationId: JSON.parse(req.params.id),
+                        id: req.body.id
                     }
                 })
                 .then(() => res.status(204).json({

@@ -6,6 +6,7 @@ export const auth = {
         connected: false,
         register: false,
         user: null,
+        userProfil: null
 
     },
     actions: {
@@ -50,6 +51,19 @@ export const auth = {
                     return Promise.reject(error)
                 })
         },
+        GetUserById({
+            commit
+        }, id) {
+            return AuthService.getOneUser(id)
+                .then(res => {
+                    commit('USER_PROFIL', res.data);
+                    console.log(res.data)
+                    return Promise.resolve(res)
+                })
+                .catch(error => {
+                    return Promise.reject(error)
+                })
+        },
         UpdateProfil({
             commit
         }, infos) {
@@ -85,10 +99,19 @@ export const auth = {
         USER_ACCOUNT(state, val) {
             state.user = val
         },
+        USER_PROFIL(state, val) {
+            state.userProfil = val
+        },
         INITIAL_STATE_AUTH(state) {
-            state.connected = false;
-            state.register = false;
-            state.user = null;
+            let initial = {
+                connected: false,
+                register: false,
+                user: null,
+                userProfil: null
+
+            }
+            Object.assign(state, initial)
+
         }
 
     }

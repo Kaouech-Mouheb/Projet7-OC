@@ -218,7 +218,7 @@ a {
   margin-right: 5px;
 }
 .nav-bar {
-  z-index: 100;
+  z-index: 110;
 }
 .notification-content {
   text-overflow: ellipsis;

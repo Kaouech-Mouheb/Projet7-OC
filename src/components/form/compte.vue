@@ -173,6 +173,9 @@
           <small class="d-block text-secondary">
             Compte : <span class="text-danger">supprimer </span></small
           >
+          <small class="d-block text-secondary">
+            Admin : <span class="text-danger">Non </span></small
+          >
           <template v-slot:actions>
             <v-btn
               @click="passwordModify = passwordModify ? false : true"
@@ -304,6 +307,54 @@
           </small>
         </div>
       </div>
+      <div class="row">
+        <div class="col">
+          <small class="text-primary"> Devenir Administrateur </small>
+          <v-btn
+            @click="administrateur = administrateur ? false : true"
+            text
+            color="success"
+            >{{
+              (administrateurBtn = administrateur
+                ? (administrateurBtn = "Annuler")
+                : (administrateurBtn = "admin"))
+            }}</v-btn
+          >
+          <div v-if="administrateur">
+            <v-form ref="form" v-model="valid" lazy-validation>
+              <v-row>
+                <v-col cols="4">
+                  <small class="text-secondary">Entrée votre clé sucrét</small>
+                </v-col>
+                <v-col cols="8">
+                  <v-text-field
+                    color="#5b25f5"
+                    v-model="cleAdministrateur"
+                    label="Clé sucrét "
+                    required
+                  >
+                  </v-text-field>
+                </v-col>
+              </v-row>
+              <v-btn
+                color="primary"
+                :rules="passwordRules"
+                :disabled="!valid"
+                :loading="isLoadingAdministrateur"
+                class="mr-4 mb-4"
+                @click="addAdmin"
+              >
+                Validez
+              </v-btn>
+            </v-form>
+            <div v-if="deleteMessageError">
+              <small class="text-danger">
+                {{ deleteMessageError }}
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
     </v-card>
   </v-container>
 </template>
@@ -331,6 +382,7 @@ export default {
     isLoading: false,
     isLoadingImage: false,
     isLoadingPassword: false,
+    isLoadingAdministrateur: false,
     supprimerCompte: false,
     isLoadingDelete: false,
     passwordModify: false,
@@ -338,8 +390,12 @@ export default {
     passwordSupprimer: "",
     passwordMessageError: "",
     deleteMessageError: "",
+    cleAdministrateur: "",
     menu1: false,
     show4: false,
+    administrateur: false,
+    administrateurBtn: "",
+    passwordAdministrateur: "",
     modifierBtn: "",
     supprimerBtn: "",
     ancienPassword: "",
@@ -353,6 +409,7 @@ export default {
         /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/.test(v) ||
         "doit contenir au moins 8 des caractères dont une majuscule, une minuscule et un chiffre",
     ],
+    adminRules:[(v) => !!v || "Veuillez saisir votre clé sucrét"]
   }),
 
   computed: {
@@ -406,6 +463,12 @@ export default {
         .dispatch("auth/UpdateProfil", infos)
         .catch((error) => (this.messageError = error.response.data.error))
         .finally(() => (this.isLoading = false));
+    },
+    addAdmin(){
+      let admin = {
+        isAdmin: true
+      }
+      return AuthService.addAdmin(admin)
     },
     updateImage() {
       const formData = require("form-data");

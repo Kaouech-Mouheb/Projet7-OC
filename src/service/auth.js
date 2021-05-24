@@ -10,7 +10,6 @@ class AuthService {
             })
 
     }
-
     register(user) {
         return axios
             .post(API_URL + 'register', {
@@ -28,9 +27,9 @@ class AuthService {
                 }
             })
     }
-    getUsers() {
+    getOneUser(id) {
         return axios
-            .get(API_URL + "users", {
+            .get(`${API_URL}${id}`, {
                 headers: {
                     'Accept': "application/json",
                     'Authorization': BearerToken
@@ -75,12 +74,23 @@ class AuthService {
     }
     deleteUser(password) {
         return axios.delete(API_URL + "users/delete", {
-            data:password,
+            data: password,
             headers: {
                 'Accept': 'application/json',
                 'Authorization': BearerToken
             },
         });
+    }
+    addAdmin(admin) {
+        return axios({
+            method: 'post',
+            url: API_URL + 'admin',
+            data: admin,
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': BearerToken
+            }
+        })
     }
 }
 export default new AuthService();

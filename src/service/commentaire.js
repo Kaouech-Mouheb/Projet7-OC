@@ -14,8 +14,9 @@ class CommentaireService {
         })
 
     }
-    delete(id) {
-        return axios.delete(`${API_URL}/${id}`, {
+    delete(paramsId, id) {
+        return axios.delete(`${API_URL}/${paramsId}`, {
+            data:id,
             headers: {
                 'Accept': 'application/json',
                 'Authorization': BearerToken
