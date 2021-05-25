@@ -81,6 +81,16 @@ class AuthService {
             },
         });
     }
+
+    getUsers() {
+        return axios
+            .get(`${API_URL}users`, {
+                headers: {
+                    'Accept': "application/json",
+                    'Authorization': BearerToken
+                },
+            })
+    }
     addAdmin(admin) {
         return axios({
             method: 'post',

@@ -167,8 +167,7 @@ export default {
       //active le barre de loading
       this.isLoading = true;
       //récupérer les données de l 'api
-      return AuthService.getUsers()
-        .then((res) => {
+      return AuthService.getUsers().then((res) => {
           this.users = res.data;
           console.log(this.users);
         })

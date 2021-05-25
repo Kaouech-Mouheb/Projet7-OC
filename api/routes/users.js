@@ -10,8 +10,11 @@ router.post('/register', userCtrl.register);
 router.post('/login', userCtrl.login);
 
 router.get('/', auth, userCtrl.getUserAccount);
+router.get('/users', auth, userCtrl.getUsers);
 router.get('/:id', auth, userCtrl.getProfil);
-router.get('/users', auth, userCtrl.getAllUsers);
+
+
+
 
 router.put('/update-profil', auth, userCtrl.updateProfil);
 router.put('/update-image', auth, multer, userCtrl.updateImage);

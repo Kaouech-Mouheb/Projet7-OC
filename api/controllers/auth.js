@@ -97,20 +97,7 @@ exports.login = (req, res, next) => {
             })
         })
 };
-exports.getAllUsers = (req, res) => {
-    let id = utilsJwt.getUserId(req.headers.authorization);
-    if (Number.isNaN(id)) return res.status(400).end();
-    db.User.findAll({
-            attributes: {
-                exclude: ["password"]
-            },
-        })
-        .then(user => res.status(200).json(user))
-        .catch(error => res.status(400).json({
-            'error': error
-        }));
 
-}
 exports.getUserAccount = (req, res) => {
     //identification du demandeur
     let id = utilsJwt.getUserId(req.headers.authorization);
@@ -128,6 +115,21 @@ exports.getUserAccount = (req, res) => {
             'error': error
         }));
 }
+
+exports.getUsers = (req, res) => {
+    //identification du demandeur
+    db.User.findAll({
+            attributes: {
+                exclude: ["password"]
+            },
+        })
+        .then(user => res.status(200).json(user))
+        .catch(error => res.status(400).json({
+            'error': error
+        }));
+}
+
+
 exports.getProfil = (req, res) => {
     //identification du demandeur
     let id = utilsJwt.getUserId(req.headers.authorization);
@@ -306,3 +308,10 @@ exports.deleteAccount = (req, res, next) => {
         'Error': error,
     }))
 }
+/**
+ * exports.Users = (req, res) => {
+    let id = utilsJwt.getUserId(req.headers.authorization);
+    if (Number.isNaN(id)) return res.status(400).end();
+    return res.status(200).json({'message': 'hello'})
+}
+ */
