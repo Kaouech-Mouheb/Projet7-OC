@@ -110,8 +110,8 @@
     <div v-for="pub in this.Publications" :key="pub.id">
       <v-card class="mx-auto mt-4" v-if="pub.UserId == paramsId">
         <v-card-text class="card">
-          <div class="row">
-            <div class="col-md-2">
+          <div class="d-flex">
+            <div class="mr-3">
               <img
                 :src="
                   pub.User.avatar ||
@@ -121,7 +121,7 @@
                 alt="Cinque Terre"
               />
             </div>
-            <div class="col">
+            <div>
               <small class="text-capitalize"
                 >{{ pub.User.username }} {{ pub.User.lastName }}</small
               >

@@ -1,13 +1,13 @@
 <template>
-  <div class="container container-pub mt-2 mb-4">
+  <div class="container container-pub mt-2 mb-4 shadow-sm p-3 bg-white rounded">
     <div class="close" title="Fermer">
       <v-btn icon @click="close()">
         <v-icon color="error">mdi-close-box</v-icon></v-btn
       >
     </div>
-    <div class="row bg-white" v-for="pub in Publications" :key="pub.id">
-      <div class="col-md-7 card-height" v-if="pub.id == paramsId">
-        <div class="card-body">
+    <div class="row" v-for="pub in Publications" :key="pub.id">
+      <div class="col-md-7" v-if="pub.id == paramsId">
+        <div class="shadow-none p-3 mb-5 bg-light rounded">
           <div class="card-text">
             <small>
               {{ pub.content }}

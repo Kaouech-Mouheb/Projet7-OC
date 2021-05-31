@@ -31,10 +31,16 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             type: DataTypes.STRING,
             unique: true,
+            isEmail: true,
         },
         username: {
             allowNull: false,
-            type: DataTypes.STRING
+            type: DataTypes.STRING,
+            validate: {
+                notNull: {
+                    msg: 'Please enter your name'
+                }
+            }
         },
         lastName: {
             allowNull: true,
@@ -44,7 +50,10 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
             type: DataTypes.STRING
         },
-        password: DataTypes.STRING,
+        password: {
+            is: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/,
+            type: DataTypes.STRING
+        },
         avatar: {
             allowNull: true,
             type: DataTypes.STRING

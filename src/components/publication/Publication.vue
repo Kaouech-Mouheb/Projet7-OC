@@ -82,10 +82,7 @@
           </v-card-actions>
           <div class="commentaire">
             <small class="d-block">Toutes les commentaires ..</small>
-            <div
-              v-for="commentaire in pub.Comments"
-              :key="commentaire.index"
-            >
+            <div v-for="commentaire in pub.Comments" :key="commentaire.id">
               <div class="list-commentaire">
                 <div>
                   <img
@@ -185,7 +182,7 @@ export default {
       return this.$store.state.auth.user;
     },
     isAdmin() {
-      return this.$store.state.auth.user;
+      return this.$store.state.auth.user.isAdmin;
     },
 
     UserId() {
