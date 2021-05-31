@@ -100,6 +100,7 @@ export default {
     AppPublication,
   },
   created() {
+    //récupérer les données de l'utilisateur
     this.$store
       .dispatch("auth/GetOneUser")
       .then(() => {
@@ -113,6 +114,7 @@ export default {
         localStorage.removeItem("token");
         return window.location.reload();
       });
+      // récupérer toutes les publicaitons
     this.$store
       .dispatch("pub/GetPublications")
       .then(() => {
@@ -155,21 +157,8 @@ export default {
 
   watch: {
     searchQuery() {
-      console.log(this.searchQuery.length);
-
       if (this.isLoading) return;
-      //quand on supprimer les saisie de recherche initial le tableaux users
-      if (this.users.length != 0 && this.searchQuery.length == 1) {
-        return (this.users = []);
-      }
-      //si nous avons saisie quelque chose arrêt ici la fonction
-      if (
-        this.searchQuery.length > 1 ||
-        this.users.length != 0 ||
-        this.searchQuery.length == 0
-      )
-        return;
-      //active le barre de loading
+      
       this.isLoading = true;
       //récupérer les données de l 'api
       return AuthService.getUsers()

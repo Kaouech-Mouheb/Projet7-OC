@@ -5,12 +5,8 @@
         <v-icon color="error">mdi-close-box</v-icon></v-btn
       >
     </div>
-    <div class="row" v-for="pub in Publications" :key="pub.id">
-      <div class="col-md-7 card card-height" v-if="pub.id == paramsId">
-        <div class="bg-dark p-4" v-if="pub.attachment">
-          <img class="mx-auto d-block img-fluid" :src="pub.attachment" />
-        </div>
-
+    <div class="row bg-white" v-for="pub in Publications" :key="pub.id">
+      <div class="col-md-7 card-height" v-if="pub.id == paramsId">
         <div class="card-body">
           <div class="card-text">
             <small>
@@ -18,31 +14,34 @@
             </small>
           </div>
         </div>
+        <div class="bg-dark p-4" v-if="pub.attachment">
+          <img class="mx-auto d-block img-fluid" :src="pub.attachment" />
+        </div>
         <v-card-actions class="content-notification">
-            <div class="commentaire-titre">
-              <small class="commentaire-icon">
-                {{ pub.Comments.length }} (commentaires)
-              </small>
-              <v-icon> mdi-message-outline </v-icon>
-            </div>
-            <div>
-              <small> {{ Likes(pub.Likes) }} (Likes) </small>
-              <v-btn icon @click="liked(pub.id)">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  height="24px"
-                  viewBox="0 0 24 24"
-                  width="24px"
-                  fill="#646464"
-                >
-                  <path d="M0 0h24v24H0V0z" fill="none" />
-                  <path
-                    d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"
-                  />
-                </svg>
-              </v-btn>
-            </div>
-          </v-card-actions>
+          <div class="commentaire-titre">
+            <small class="commentaire-icon">
+              {{ pub.Comments.length }} (commentaires)
+            </small>
+            <v-icon> mdi-message-outline </v-icon>
+          </div>
+          <div>
+            <small> {{ Likes(pub.Likes) }} (Likes) </small>
+            <v-btn icon @click="liked(pub.id)">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 0 24 24"
+                width="24px"
+                fill="#646464"
+              >
+                <path d="M0 0h24v24H0V0z" fill="none" />
+                <path
+                  d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"
+                />
+              </svg>
+            </v-btn>
+          </div>
+        </v-card-actions>
         <div class="commentaire">
           <small class="d-block">Toutes les commentaires ..</small>
           <div v-for="commentaire in pub.Comments" :key="commentaire.id">
@@ -114,7 +113,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-5 card" v-if="pub.id == paramsId">
+      <div class="col-md-5" v-if="pub.id == paramsId">
         <div>
           <div class="m-2">
             <img
