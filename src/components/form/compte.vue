@@ -174,8 +174,9 @@
             Compte : <span class="text-danger">supprimer </span></small
           >
           <small class="d-block text-secondary">
-            Admin : <span class="text-danger">Non </span></small
-          >
+            Admin : <span :class="isAdmin ? 'text-success':'text-danger'" v-text="isAdmin ? 'oui': 'Non'"></span>
+
+            </small>
           <template v-slot:actions>
             <v-btn
               @click="passwordModify = passwordModify ? false : true"
@@ -307,7 +308,7 @@
           </small>
         </div>
       </div>
-      <div class="row">
+      <div class="row" v-if="!isAdmin">
         <div class="col">
           <small class="text-primary"> Devenir Administrateur </small>
           <v-btn
@@ -409,7 +410,7 @@ export default {
         /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/.test(v) ||
         "doit contenir au moins 8 des caractères dont une majuscule, une minuscule et un chiffre",
     ],
-    adminRules:[(v) => !!v || "Veuillez saisir votre clé sucrét"]
+    adminRules: [(v) => !!v || "Veuillez saisir votre clé sucrét"],
   }),
 
   computed: {
@@ -434,9 +435,13 @@ export default {
     avatar() {
       return this.$store.state.auth.user.avatar;
     },
+    isAdmin() {
+      return this.$store.state.auth.user.isAdmin;
+    },
   },
 
   methods: {
+    //ajouter des régles pour afficher les donées dans les champs 
     user() {
       this.infos.username = this.username;
       this.infos.email = this.email;
@@ -446,9 +451,11 @@ export default {
       this.infos.lastName = this.lastName || "";
       this.date = this.birthday || "";
     },
+    //créer un Url à partir d'un fichier BLOB
     onFileChange() {
       this.url = URL.createObjectURL(this.infos.avatar);
     },
+    //mettre à jour vos information de profil
     updateProfil() {
       let infos = {
         username: this.infos.username,
@@ -464,12 +471,15 @@ export default {
         .catch((error) => (this.messageError = error.response.data.error))
         .finally(() => (this.isLoading = false));
     },
-    addAdmin(){
-      let admin = {
-        isAdmin: true
-      }
-      return AuthService.addAdmin(admin)
+    //ajouter un admin
+    addAdmin() {
+      this.validate()
+      let key = {
+        secretKey: this.cleAdministrateur,
+      };
+      return AuthService.addAdmin(key);
     },
+    //changer la photo de profil
     updateImage() {
       const formData = require("form-data");
       let form = new formData();
@@ -479,6 +489,7 @@ export default {
         .catch((error) => (this.messageError = error.response.data.error))
         .finally(() => ((this.isLoading = false), (this.updateAvatar = false)));
     },
+    //mettre à jour votre mot de passe
     updatePassword() {
       //vérifier les champs
       this.validate();
@@ -503,6 +514,7 @@ export default {
         }
       }, 10);
     },
+    //supprimer votre compte
     deleteAccompte() {
       this.validate();
       setTimeout(() => {
@@ -524,9 +536,11 @@ export default {
         }
       }, 10);
     },
+    //vérifier les champs 'input'
     validate() {
       this.$refs.form.validate();
     },
+    //fermer la page
     close() {
       return window.history.back();
     },

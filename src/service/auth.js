@@ -81,7 +81,15 @@ class AuthService {
             },
         });
     }
-
+    deleteUserByAdmin(password, id) {
+        return axios.delete(API_URL + `users/delete/${id}`, {
+            data: password,
+            headers: {
+                'Accept': 'application/json',
+                'Authorization': BearerToken
+            },
+        });
+    }
     getUsers() {
         return axios
             .get(`${API_URL}users`, {

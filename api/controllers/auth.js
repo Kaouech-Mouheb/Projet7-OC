@@ -183,13 +183,20 @@ exports.updateProfil = (req, res) => {
 exports.addAdmin = (req, res) => {
     let id = utilsJwt.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
+
+    if (req.body.secretKey !== process.env.SECRET_KEY_ADMIN) {
+        res.status(401).json({ 'message' : 'veuillez entrer une clé secrét valable'});
+    }
+    let admin = {
+        isAdmin: true
+    }
     db.User.findOne({
             where: {
                 id: id
             }
         })
         .then(() => {
-            db.User.update(req.body.isAdmin, {
+            db.User.update(admin, {
                     where: {
                         id: id
                     }
@@ -308,10 +315,38 @@ exports.deleteAccount = (req, res, next) => {
         'Error': error,
     }))
 }
-/**
- * exports.Users = (req, res) => {
+exports.deleteAccountByAdmin = (req, res, next) => {
     let id = utilsJwt.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
-    return res.status(200).json({'message': 'hello'})
+    //comparer les mots de passe des utilisateur
+    db.User.findOne({
+        where: {
+            isAdmin: true,
+            id: id
+        }
+    }).then(user => {
+        bcrypt.compare(req.body.password, user.password)
+            .then(valid => {
+                if (!valid) {
+                    return res.status(403).json({
+                        error: 'Ancien Mot de passe incorrect'
+                    })
+                }
+                db.User.destroy({
+                    where: {
+                        id: req.params.id
+                    }
+                }).then(() => {
+                    res.status(204).json({
+                        'message': 'Compte supprimé'
+                    })
+                }).catch(error => console.log(error))
+            }).catch(error => res.status(500).json({
+                'Error': error,
+            }))
+
+
+    }).catch(error => res.status(500).json({
+        'Error': error,
+    }))
 }
- */

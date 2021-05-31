@@ -93,20 +93,29 @@ exports.getPublications = (req, res, next) => {
     if (Number.isNaN(id)) return res.status(400).end();
 
     db.Publication.findAll({
-            order: Sequelize.literal('updatedAt DESC'),
             include: [{
                     model: db.User,
-                    attributes: ['username', 'lastName', 'avatar', 'id']
+                    attributes: ['username', 'lastName', 'avatar', 'id'],
                 }, {
                     model: db.Like,
                     attributes: ['like']
                 }, {
+                    order: Sequelize.literal('updatedAt ASC'),
                     model: db.Comment,
                     attributes: ['id', 'comment', 'createdAt', 'updatedAt', 'UserId', 'PublicationId', 'avatar', 'username', 'lastName']
 
                 }
 
+            ],
+            // définir l'ordre pour chaque publication
+            order: [Sequelize.literal('updatedAt DESC'),
+            //définir l'ordre pour un modél précise
+                [{
+                    model: db.Comment
+                }, Sequelize.literal('updatedAt asc')]
             ]
+
+
         })
         .then(publications => res.status(200).json(publications))
         .catch(error => res.status(400).json({
@@ -125,13 +134,7 @@ exports.updatePublication = (req, res) => {
         where: {
             id: req.params.id
         }
-    }).then(pub => {
-        //vérifier si vous êtes le propiétaire de cette publication
-        if (pub.UserId != id) {
-            return res.status(409).json({
-                'error': "vous n'êtes pas autorisé à modifier cette publication"
-            })
-        }
+    }).then(() => {
         //modifier la publication en question 
         return db.Publication.update(publication, {
             where: {
@@ -158,12 +161,7 @@ exports.deletePublication = (req, res, next) => {
         where: {
             id: req.params.id
         }
-    }).then(pub => {
-        if (pub.UserId != id) {
-            return res.status(409).json({
-                'error': "vous n'êtes pas autorisé à supprimer cette publication"
-            })
-        }
+    }).then(() => {
         return db.Publication.destroy({
                 where: {
                     id: req.params.id

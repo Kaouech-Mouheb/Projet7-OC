@@ -24,6 +24,7 @@ router.put('/admin', auth, userCtrl.addAdmin);
 
 
 router.delete('/users/delete', auth, userCtrl.deleteAccount);
+router.delete('/users/delete/:id', auth, userCtrl.deleteAccountByAdmin);
 
 
 /* EXPORT */

@@ -10,17 +10,19 @@
         <v-card>
           <div class="mb-4">
             <div class="p-4 d-flex">
-              <div class="mr-4">
+              <div class="mr-4 text-center">
                 <v-img
                   :src="
                     User.avatar || '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
                   "
                   lazy-src="https://picsum.photos/10/6?image"
                   aspect-ratio="1"
-                  class="avatar d-block"
+                  class="avatar d-block mx-auto"
                   alt="Cinque Terre"
                 />
-                 <small class="text-secondary text-center text-capitalize">{{User.username}} {{User.lastName}}</small>
+                <small class="text-secondary name text-capitalize"
+                  >{{ User.username }} {{ User.lastName }}</small
+                >
               </div>
               <div class="create-pub col">
                 <router-link to="/create-publication">
@@ -45,9 +47,7 @@
           <AppPublication :multimedia="multimedia" :text="text" />
         </div>
         <div v-else class="text-center">
-          <small
-            >Aucune Publication pour le moment</small
-          >
+          <small>Aucune Publication pour le moment</small>
         </div>
       </div>
       <div class="col-md-1 small-screen"></div>
@@ -84,12 +84,7 @@
             flat
             label="Multimédia"
           ></v-switch>
-          <v-switch
-            v-model="text"
-            color="indigo"
-            flat
-            label="Text"
-          ></v-switch>
+          <v-switch v-model="text" color="indigo" flat label="Text"></v-switch>
         </v-col>
       </div>
     </div>
@@ -105,10 +100,19 @@ export default {
     AppPublication,
   },
   created() {
-    this.$store.dispatch("auth/GetOneUser").then(() => {
-      this.waiting = false;
-      this.loadingPage = true;
-    });
+    this.$store
+      .dispatch("auth/GetOneUser")
+      .then(() => {
+        this.waiting = false;
+        this.loadingPage = true;
+      })
+      .catch(() => {
+        alert("Votre session est expirée !");
+        this.waiting = true;
+        this.loadingPage = false;
+        localStorage.removeItem("token");
+        return window.location.reload();
+      });
     this.$store
       .dispatch("pub/GetPublications")
       .then(() => {
@@ -116,6 +120,7 @@ export default {
         this.loadingPublication = true;
       })
       .catch(() => {
+        this.waiting = true;
         this.loadingPublication = false;
       });
   },
@@ -167,7 +172,8 @@ export default {
       //active le barre de loading
       this.isLoading = true;
       //récupérer les données de l 'api
-      return AuthService.getUsers().then((res) => {
+      return AuthService.getUsers()
+        .then((res) => {
           this.users = res.data;
           console.log(this.users);
         })
@@ -178,7 +184,7 @@ export default {
 };
 </script>
 <style scoped>
-.small-screen{
+.small-screen {
   z-index: 1;
 }
 .text-indigo {
@@ -194,7 +200,7 @@ a {
   color: grey !important;
   text-decoration: none;
 }
-.create-pub{
+.create-pub {
   background: rgb(240, 240, 240);
   border-radius: 1em;
   font-weight: bold;
@@ -230,6 +236,10 @@ a {
   }
   .publication-component {
     margin-top: 35px;
+  }
+  .name {
+    font-size: 0.7em;
+    font-weight: bold;
   }
 }
 </style>

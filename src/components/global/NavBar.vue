@@ -122,21 +122,20 @@ export default {
     this.navItem();
     console.log(this.deconnexion);
   },
-  mounted() {
-    this.publications = this.$store.state.pub.publications;
-    console.log(this.publications);
-  },
   name: "AppNav",
   data() {
     return {
       drawer: false,
       notification: false,
-      publications: null,
+     
     };
   },
   computed: {
     deconnexion() {
       return this.$store.state.auth.connected;
+    },
+     publications() {
+      return this.$store.state.pub.publications;
     },
   },
 

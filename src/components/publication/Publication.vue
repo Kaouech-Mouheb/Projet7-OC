@@ -16,7 +16,11 @@
         "
       >
         <v-card-text class="card">
-          <div class="d-flex" @click="getAccount(pub.User.id)">
+          <div
+            class="d-flex"
+            @click="getAccount(pub.User.id)"
+            style="cursor: pointer"
+          >
             <div class="mr-3">
               <img
                 :src="
@@ -78,7 +82,10 @@
           </v-card-actions>
           <div class="commentaire">
             <small class="d-block">Toutes les commentaires ..</small>
-            <div v-for="commentaire in pub.Comments" :key="commentaire.id">
+            <div
+              v-for="commentaire in pub.Comments"
+              :key="commentaire.index"
+            >
               <div class="list-commentaire">
                 <div>
                   <img
@@ -94,8 +101,11 @@
 
                 <div class="champs-commentaire">
                   <small class="">{{ commentaire.comment }}</small>
-                  <v-btn v-if="commentaire.UserId == UserId"
-                    @click="deleteCommit(commentaire.PublicationId, commentaire.id)"
+                  <v-btn
+                    v-if="commentaire.UserId == UserId || isAdmin"
+                    @click="
+                      deleteCommit(commentaire.PublicationId, commentaire.id)
+                    "
                     class="supprimer"
                     icon
                   >
@@ -137,7 +147,7 @@
                 hint="Veuillez ne pas dépasser 70 characters"
                 label="Ajouter un commentaire ..!"
                 clearable
-                id="commentaire"
+                :id="`commentaire${pub.id}`"
                 maxlength="70"
                 autocomplete="off"
               ></v-text-field>
@@ -174,12 +184,16 @@ export default {
     User() {
       return this.$store.state.auth.user;
     },
+    isAdmin() {
+      return this.$store.state.auth.user;
+    },
 
     UserId() {
       return JSON.parse(localStorage.getItem("user"));
     },
   },
   methods: {
+    //ajouter un like sur la publication
     liked(id) {
       let val = {
         like: 1,
@@ -192,47 +206,7 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-    getAccount(id){
-      return this.$store.dispatch("auth/GetUserById", id)
-      .then(() => this.$router.push(`/userAccount/${id}`))
-      .catch(error => console.log(error))
-    },
-    sendCommentaire(id, avatar, lastName, username) {
-      let commentaire = {
-        comment: document.getElementById("commentaire").value,
-        lastName: lastName,
-        avatar: avatar,
-        username: username,
-      };
-      this.commentaireLoading = true;
-      return CommentaireService.addCommentaire(id, commentaire)
-        .then((res) => {
-          console.log(res.data);
-          this.$nextTick(function () {
-            this.$store.dispatch("pub/GetPublications");
-             document.getElementById("commentaire").value = ""
-          });
-        })
-        .catch((error) => {
-          this.messageCommentaire = error.response.data.error;
-          console.log(error.response.data.id);
-          this.commentaireId = error.response.data.id;
-        })
-        .finally(() => (this.commentaireLoading = false));
-    },
-    deleteCommit(paramsId, id) {
-      let commentaire = {
-        id: id,
-      }
-      return CommentaireService.delete(paramsId, commentaire)
-        .then((res) => {
-          console.log(res.data);
-          this.$nextTick(function () {
-            this.$store.dispatch("pub/GetPublications");
-          });
-        })
-        .catch((error) => console.log(error.response.data.error));
-    },
+    //afficher les likes sur chaque publication
     Likes(val) {
       let like = 0;
       val.map((el) => {
@@ -241,6 +215,51 @@ export default {
 
       console.log(like);
       return like;
+    },
+    getAccount(id) {
+      return this.$store
+        .dispatch("auth/GetUserById", id)
+        .then(() => this.$router.push(`/userAccount/${id}`))
+        .catch((error) => console.log(error));
+    },
+    //ajouter un commentaire
+    sendCommentaire(id, avatar, lastName, username) {
+      let commit = document.getElementById(`commentaire${id}`).value;
+      let commentaire = {
+        comment: commit,
+        lastName: lastName,
+        avatar: avatar,
+        username: username,
+      };
+      //afficher un spinner sur le bouton d'envoi
+      this.commentaireLoading = true;
+
+      return CommentaireService.addCommentaire(id, commentaire)
+        .then(() => {
+          // lancer un rappel à la fonction getPublications pour mettre à jour le contenu aprés avoir ajouter un commentaire
+          this.$nextTick(function () {
+            this.$store.dispatch("pub/GetPublications");
+          });
+        })
+        .catch((error) => {
+          //afficher un message d'erreur
+          this.messageCommentaire = error.response.data.error;
+        })
+        .finally(() => (this.commentaireLoading = false));
+    },
+    //supprimer un commentaire
+    deleteCommit(paramsId, id) {
+      let commentaire = {
+        id: id,
+      };
+      return CommentaireService.delete(paramsId, commentaire)
+        .then(() => {
+          // lancer un rappel à la fonction getPublications pour mettre à jour le contenu aprés suppression
+          this.$nextTick(function () {
+            this.$store.dispatch("pub/GetPublications");
+          });
+        })
+        .catch((error) => console.log(error.response.data.error));
     },
   },
 };

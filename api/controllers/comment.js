@@ -40,9 +40,10 @@ exports.comment = function (req, res) {
 exports.deleteComment = function (req, res) {
     let id = utils.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
+    console.log(req.body)
     db.Comment.findOne({
             where: {
-                UserId: id,
+                id: req.body.id,
                 PublicationId: JSON.parse(req.params.id)
             }
         })
@@ -50,7 +51,6 @@ exports.deleteComment = function (req, res) {
 
             db.Comment.destroy({
                     where: {
-                        UserId: id,
                         PublicationId: JSON.parse(req.params.id),
                         id: req.body.id
                     }

@@ -82,10 +82,7 @@
       </v-row>
 
       <div v-for="pub in this.Publications" :key="pub.id">
-        <v-card
-          class="mx-auto mt-4"
-          v-if="pub.UserId === UserId"
-        >
+        <v-card class="mx-auto mt-4" v-if="pub.UserId === UserId">
           <v-card-text class="card">
             <div class="row">
               <div class="col-md-2">
@@ -123,8 +120,12 @@
               ></v-img>
             </div>
             <v-card-actions class="content-notification">
-              <v-spacer></v-spacer>
-
+              <div class="commentaire-titre">
+                <small class="commentaire-icon">
+                  {{ pub.Comments.length }} (commentaires)
+                </small>
+                <v-icon> mdi-message-outline </v-icon>
+              </div>
               <div>
                 <small> {{ Likes(pub.Likes) }} (Likes) </small>
                 <v-btn icon @click="liked(pub.id)">
@@ -143,6 +144,77 @@
                 </v-btn>
               </div>
             </v-card-actions>
+
+            <div class="commentaire">
+              <small class="d-block">Toutes les commentaires ..</small>
+              <div v-for="commentaire in pub.Comments" :key="commentaire.id">
+                <div class="list-commentaire">
+                  <div>
+                    <img
+                      :src="
+                        commentaire.avatar ||
+                        '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
+                      "
+                      alt=""
+                      class="img-fluid avatar-commentaire"
+                    />
+                    <small class="username">{{ commentaire.username }}</small>
+                  </div>
+
+                  <div class="champs-commentaire">
+                    <small class="">{{ commentaire.comment }}</small>
+                    <v-btn
+                      v-if="commentaire.UserId == UserId"
+                      @click="
+                        deleteCommit(commentaire.PublicationId, commentaire.id)
+                      "
+                      class="supprimer"
+                      icon
+                    >
+                      <v-icon>mdi-trash-can-outline</v-icon></v-btn
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr />
+
+            <div class="row">
+              <div class="text-center col-md-2">
+                <img
+                  :src="
+                    User.avatar || '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
+                  "
+                  alt=""
+                  class="img-fluid avatar-commentaire"
+                />
+                <small class="text-capitalize d-block"
+                  >{{ User.username }} {{ User.lastName }}</small
+                >
+              </div>
+              <div class="col">
+                <v-text-field
+                  color="#5b25f5"
+                  append-outer-icon="mdi-send"
+                  @click:append-outer="
+                    sendCommentaire(
+                      pub.id,
+                      User.avatar,
+                      User.lastName,
+                      User.username
+                    )
+                  "
+                  :loading="commentaireLoading"
+                  counter="70"
+                  hint="Veuillez ne pas dépasser 70 characters"
+                  label="Ajouter un commentaire ..!"
+                  clearable
+                  :id="`commentaire${pub.id}`"
+                  maxlength="70"
+                  autocomplete="off"
+                ></v-text-field>
+              </div>
+            </div>
           </v-card-text>
         </v-card>
       </div>
@@ -151,6 +223,7 @@
 </template>
 <script>
 import LikeService from "../service/like";
+import CommentaireService from "../service/commentaire";
 export default {
   created() {
     this.$store.dispatch("auth/GetOneUser");
@@ -159,6 +232,10 @@ export default {
   data: () => ({
     loading: false,
     selection: 1,
+    profile: true,
+    messageLike: "",
+    messageCommentaire: "",
+    commentaireLoading: false,
   }),
   computed: {
     UserId() {
@@ -185,8 +262,12 @@ export default {
     avatar() {
       return this.$store.state.auth.user.avatar;
     },
+    User() {
+      return this.$store.state.auth.user;
+    },
   },
   methods: {
+    //ajouter un like sur la publication
     liked(id) {
       let val = {
         like: 1,
@@ -199,6 +280,7 @@ export default {
         })
         .catch((error) => console.log(error));
     },
+    //afficher les likes sur chaque publication
     Likes(val) {
       let like = 0;
       val.map((el) => {
@@ -207,6 +289,45 @@ export default {
 
       console.log(like);
       return like;
+    },
+    //ajouter un commentaire
+    sendCommentaire(id, avatar, lastName, username) {
+      let commit = document.getElementById(`commentaire${id}`).value;
+      let commentaire = {
+        comment: commit,
+        lastName: lastName,
+        avatar: avatar,
+        username: username,
+      };
+      //afficher un spinner sur le bouton d'envoi
+      this.commentaireLoading = true;
+
+      return CommentaireService.addCommentaire(id, commentaire)
+        .then(() => {
+          // lancer un rappel à la fonction getPublications pour mettre à jour le contenu aprés avoir ajouter un commentaire
+          this.$nextTick(function () {
+            this.$store.dispatch("pub/GetPublications");
+          });
+        })
+        .catch((error) => {
+          //afficher un message d'erreur
+          this.messageCommentaire = error.response.data.error;
+        })
+        .finally(() => (this.commentaireLoading = false));
+    },
+    //supprimer un commentaire
+    deleteCommit(paramsId, id) {
+      let commentaire = {
+        id: id,
+      };
+      return CommentaireService.delete(paramsId, commentaire)
+        .then(() => {
+          // lancer un rappel à la fonction getPublications pour mettre à jour le contenu aprés suppression
+          this.$nextTick(function () {
+            this.$store.dispatch("pub/GetPublications");
+          });
+        })
+        .catch((error) => console.log(error.response.data.error));
     },
   },
 
@@ -247,5 +368,98 @@ a {
 .content-publication:hover {
   background: rgb(238, 238, 238, 0.2);
   color: black;
+}
+.avatar-commentaire {
+  vertical-align: middle;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+.commentaire {
+  max-height: 400px;
+  overflow: auto;
+}
+.commentaire-titre {
+  margin-right: 20px;
+}
+.champs-commentaire {
+  height: 62px;
+  overflow: auto;
+  font-size: 0.9em;
+  position: relative;
+}
+.supprimer {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+.list-commentaire {
+  width: 100%;
+  padding: 2% 2% 0;
+  display: flex;
+  color: black;
+  padding: 5px;
+  margin-bottom: 5px;
+  border-radius: 1em;
+}
+.commentaire {
+  width: 100%;
+  padding: 0 2%;
+}
+
+.champs-commentaire {
+  background: rgb(240, 240, 240);
+  width: 90%;
+  color: rgb(58, 58, 58);
+  margin-left: 5px;
+  padding: 20px 5px 5px;
+  border-radius: 1em;
+}
+.username {
+  position: absolute;
+  z-index: 100;
+  font-weight: bold;
+  left: 82px;
+}
+
+@media (max-width: 576px) {
+  .mx-auto {
+    max-width: 99%;
+  }
+  .commentaire {
+    width: 100%;
+    padding: 0 2%;
+  }
+  .list-commentaire {
+    width: 100%;
+    padding: 2% 2% 0;
+    display: flex;
+    position: rela;
+  }
+  .champs-commentaire {
+    background: rgb(240, 240, 240);
+    width: 80%;
+    color: rgb(58, 58, 58);
+    margin-left: 5px;
+    padding-top: 20px;
+    border-radius: 1em;
+  }
+  .username {
+    position: absolute;
+    z-index: 100;
+    font-weight: bold;
+    left: 72px;
+  }
+}
+@media (min-width: 577px) {
+  .list-commentaire {
+    position: relative;
+  }
+  .username {
+    position: absolute;
+    left: 52px;
+    top: 10px;
+  }
 }
 </style>
