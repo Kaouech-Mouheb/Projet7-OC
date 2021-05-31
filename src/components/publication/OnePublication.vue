@@ -138,6 +138,7 @@
               color="#b69efa"
               dark
               @click="updatePublication = updatePublication ? false : true"
+              v-if="pub.UserId == UserId"
             >
               <span v-if="updatePublication">Annulez</span>
               <span v-else>Modifier</span>
