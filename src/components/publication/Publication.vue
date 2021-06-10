@@ -163,7 +163,6 @@ export default {
   props: ["multimedia", "text"],
   created() {
     this.$store.dispatch("pub/GetPublications");
-    console.log(this.Publications);
   },
 
   data: () => ({
@@ -209,8 +208,6 @@ export default {
       val.map((el) => {
         like = like + el.like;
       });
-
-      console.log(like);
       return like;
     },
     getAccount(id) {

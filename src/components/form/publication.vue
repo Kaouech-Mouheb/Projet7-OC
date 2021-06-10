@@ -68,18 +68,24 @@ export default {
     description: "Hello!",
   }),
   methods: {
+    //revenir en arriére
     close() {
       return window.history.back();
     },
+    //vider les variables qui stocke les données saisie par l'utilisateur
     clear() {
       this.image = null;
       this.description = "";
     },
+    //ajouter la publication
     validate() {
       this.$refs.form.validate();
+      //on attend que la validation soit true
       setTimeout(() => {
+        // si true
         if (this.valid) {
           this.loading = true;
+          // si la publication contient une image 
           if (this.image) {
             const FormData = require("form-data");
             let form = new FormData();
@@ -87,6 +93,7 @@ export default {
             form.append("content", this.description);
             return PublicationService.createPublication(form)
               .then(() => {
+                //vide les variables de stockage
                 this.clear();
               })
               .catch((error) => {
@@ -94,6 +101,7 @@ export default {
               })
               .finally(() => {
                 this.loading = false;
+                // revenir a l'acceuil
                 this.close();
               });
           } else {

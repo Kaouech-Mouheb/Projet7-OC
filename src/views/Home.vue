@@ -164,7 +164,7 @@ export default {
       return AuthService.getUsers()
         .then((res) => {
           this.users = res.data;
-          console.log(this.users);
+      
         })
         .catch((error) => (this.messageError = error.response.data.error))
         .finally(() => (this.isLoading = false));

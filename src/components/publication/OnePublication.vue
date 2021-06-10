@@ -215,15 +215,17 @@ export default {
     },
   },
   methods: {
+    //fermer la fenêtre
     close() {
       return window.history.back();
     },
+    //récupérer l'id de la publication
     getId() {
       const url = window.location.pathname;
       const Id = url.split("/publication/")[1];
-      console.log(url, Id);
       this.paramsId = Id;
     },
+    //modifier la publication
     updatePublications() {
       this.isLoading = true;
       let publication = {
@@ -232,10 +234,15 @@ export default {
       return PublicationService.update(this.paramsId, publication)
         .then(() => {
           this.messageSuccess = true;
+          // lancer un rappel à la fonction getPublications pour mettre à jour le contenu aprés avoir ajouter un commentaire
+          this.$nextTick(function () {
+            this.$store.dispatch("pub/GetPublications");
+          });
         })
         .catch((error) => (this.messageError = error.response.data.error))
         .finally(() => (this.isLoading = false));
     },
+    //suppprimer la publication
     deletePublication() {
       this.isLoadingDelete = true;
       return PublicationService.delete(this.paramsId)
@@ -266,7 +273,6 @@ export default {
         like = like + el.like;
       });
 
-      console.log(like);
       return like;
     },
     //ajouter un commentaire
