@@ -43,7 +43,7 @@
           </div>
           <div
             @click="$router.push(`/publication/${pub.id}`)"
-            class="content-publication"
+            class="content-publication shadow-none p-3 mb-5 bg-light rounded"
             title="click"
           >
             <v-card-text>
@@ -80,7 +80,8 @@
               </v-btn>
             </div>
           </v-card-actions>
-          <div class="commentaire">
+          <hr>
+          <div class="commentaire" v-if="pub.Comments.length >0">
             <small class="d-block">Toutes les commentaires ..</small>
             <div v-for="commentaire in pub.Comments" :key="commentaire.id">
               <div class="list-commentaire">
@@ -111,8 +112,8 @@
                 </div>
               </div>
             </div>
+            <hr />
           </div>
-          <hr />
 
           <div class="row">
             <div class="col">
@@ -136,7 +137,9 @@
                 :id="`commentaire${pub.id}`"
                 maxlength="70"
                 autocomplete="off"
-              ></v-text-field>
+                append-outer-type="submit"
+              >
+              </v-text-field>
             </div>
           </div>
         </v-card-text>
@@ -222,6 +225,7 @@ export default {
           // lancer un rappel à la fonction getPublications pour mettre à jour le contenu aprés avoir ajouter un commentaire
           this.$nextTick(function () {
             this.$store.dispatch("pub/GetPublications");
+        
           });
         })
         .catch((error) => {
@@ -253,6 +257,7 @@ export default {
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  border: 4px solid blue
 }
 .create-pub {
   padding-top: 17px;
@@ -300,7 +305,6 @@ export default {
   color: black;
   padding: 5px;
   margin-bottom: 5px;
-  border-top: 2px solid rgb(208, 208, 208);
 }
 .commentaire {
   width: 100%;
@@ -321,7 +325,6 @@ export default {
   font-weight: bold;
   left: 82px;
 }
-
 
 @media (max-width: 576px) {
   .mx-auto {

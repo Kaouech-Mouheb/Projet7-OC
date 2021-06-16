@@ -181,9 +181,10 @@ export default {
 }
 .avatar {
   vertical-align: middle;
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
+  border:4px solid blue
 }
 a {
   color: grey !important;

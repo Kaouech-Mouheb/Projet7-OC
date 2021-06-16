@@ -8,14 +8,16 @@
     <div class="row" v-for="pub in Publications" :key="pub.id">
       <div class="col-md-7" v-if="pub.id == paramsId">
         <div class="shadow-none p-3 mb-5 bg-light rounded">
-          <div class="card-text">
-            <small>
-              {{ pub.content }}
-            </small>
+          <div>
+            <div class="card-text">
+              <small>
+                {{ pub.content }}
+              </small>
+            </div>
           </div>
-        </div>
-        <div class="bg-dark p-4" v-if="pub.attachment">
-          <img class="mx-auto d-block img-fluid" :src="pub.attachment" />
+          <div class="bg-dark p-4" v-if="pub.attachment">
+            <img class="mx-auto d-block img-fluid" :src="pub.attachment" />
+          </div>
         </div>
         <v-card-actions class="content-notification">
           <div class="commentaire-titre">
@@ -42,7 +44,8 @@
             </v-btn>
           </div>
         </v-card-actions>
-        <div class="commentaire">
+        <hr />
+        <div class="commentaire" v-if="pub.Comments.length > 0">
           <small class="d-block">Toutes les commentaires ..</small>
           <div v-for="commentaire in pub.Comments" :key="commentaire.id">
             <div class="list-commentaire">
@@ -73,8 +76,8 @@
               </div>
             </div>
           </div>
+          <hr />
         </div>
-        <hr />
 
         <div class="row">
           <div class="col">
@@ -313,6 +316,7 @@ export default {
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  border: 4px solid blue;
 }
 .bg-violet {
   background: #b69efa;
@@ -329,9 +333,6 @@ export default {
 }
 .card-height {
   min-height: 400px;
-}
-.content-notification {
-  border-top: 2px solid rgb(206, 206, 206);
 }
 
 .avatar-commentaire {

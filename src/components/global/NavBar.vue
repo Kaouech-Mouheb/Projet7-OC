@@ -1,7 +1,10 @@
 <template>
   <div class="nav-bar">
     <v-app-bar color="#5b25f5" dark>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon
+        v-if="login"
+        @click.stop="drawer = !drawer"
+      ></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
       <h2>
         <router-link to="/" class="title-groupomania">
@@ -114,7 +117,8 @@
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item v-if="User.isAdmin">
+         <div v-if="login">
+            <v-list-item v-if="User.isAdmin">
             <v-list-item-icon>
               <v-icon>mdi-shield-account-outline</v-icon>
             </v-list-item-icon>
@@ -128,6 +132,7 @@
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+         </div>
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
@@ -137,6 +142,7 @@
 export default {
   created() {
     this.navItem();
+    this.isLogin();
     console.log(this.deconnexion);
   },
   name: "AppNav",
@@ -144,6 +150,7 @@ export default {
     return {
       drawer: false,
       notification: false,
+      login: true,
     };
   },
   computed: {
@@ -164,6 +171,17 @@ export default {
       this.$store.commit("auth/INITIAL_STATE_AUTH");
       this.$store.commit("pub/INITIAL_STATE_PUB");
       this.$router.push("/login");
+      this.login = false;
+    },
+    isLogin() {
+      if (
+        window.location.pathname == "/login" ||
+        window.location.pathname == "/register"
+      ) {
+        this.login = false;
+      } else {
+        this.login = true;
+      }
     },
     navItem() {
       if (

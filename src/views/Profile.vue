@@ -75,13 +75,13 @@
           </v-timeline>
         </v-card-text>
       </v-card>
-      <v-row>
-        <v-card>
-          <v-card-text> Mes Publications </v-card-text>
-        </v-card>
-      </v-row>
+      <h1 class="text-center h5 mt-2 text-primary">Mes Publications</h1>
 
-      <div v-for="pub in this.Publications" :key="pub.id">
+      <div
+        v-for="pub in this.Publications"
+        :key="pub.id"
+        class="col-md-8 col-sm-12 publication-bloc"
+      >
         <v-card class="mx-auto mt-4" v-if="pub.UserId === UserId">
           <v-card-text class="card">
             <div class="d-flex">
@@ -107,7 +107,7 @@
             </div>
             <div
               @click="$router.push(`/publication/${pub.id}`)"
-              class="content-publication"
+              class="content-publication shadow-none p-3 mb-5 bg-light rounded"
               title="click"
             >
               <v-card-text>
@@ -144,8 +144,8 @@
                 </v-btn>
               </div>
             </v-card-actions>
-
-            <div class="commentaire">
+            <hr />
+            <div class="commentaire" v-if="pub.Comments.length > 0">
               <small class="d-block">Toutes les commentaires ..</small>
               <div v-for="commentaire in pub.Comments" :key="commentaire.id">
                 <div class="list-commentaire">
@@ -176,8 +176,8 @@
                   </div>
                 </div>
               </div>
+              <hr />
             </div>
-            <hr />
 
             <div class="row">
               <div class="col">
@@ -340,18 +340,16 @@ a {
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  border:4px solid blue
 }
 .create-pub {
   padding-top: 17px;
   border-radius: 50px;
   background: #f8f8f8;
 }
-.content-notification {
-  border-top: 2px solid rgb(206, 206, 206);
-}
+
 .content-publication {
   cursor: pointer;
-  border-top: 2px solid rgb(206, 206, 206);
   margin-top: 7px;
 }
 .content-publication:hover {
@@ -411,7 +409,9 @@ a {
   font-weight: bold;
   left: 82px;
 }
-
+.publication-bloc {
+  margin: 0 auto;
+}
 @media (max-width: 576px) {
   .mx-auto {
     max-width: 99%;

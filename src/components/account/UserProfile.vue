@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container>
     <v-card>
       <v-img
         height="180px"
@@ -57,57 +57,13 @@
         </v-timeline>
       </v-card-text>
     </v-card>
-    <div class="row" v-if="isAdmin">
-      <div class="col-md-2">
-        <v-btn color="error" @click="supprimerCompte = true"> Supprimer </v-btn>
-      </div>
-    </div>
-    <!--supprimer votre compte -->
-    <v-row class="supprimer-compte" v-if="supprimerCompte">
-      <v-btn icon @click="supprimerCompte = supprimerCompte ? false : true">
-        <v-icon color="error">mdi-close-box</v-icon></v-btn
-      >
-      <v-form ref="form" v-model="valid" lazy-validation>
-        <v-row>
-          <v-col cols="4">
-            <small class="text-secondary"
-              >Entrée votre mot de passe pour validez</small
-            >
-          </v-col>
-          <v-col cols="8">
-            <v-text-field
-              color="#5b25f5"
-              :prepend-icon="show4 ? 'mdi-eye' : 'mdi-eye-off'"
-              :type="show4 ? 'text' : 'password'"
-              @click:prepend="show4 = !show4"
-              v-model="passwordSupprimer"
-              :rules="passwordRules"
-              label="Mot de passe"
-              required
-            >
-            </v-text-field>
-          </v-col>
-        </v-row>
+    <h1 class="text-center h5 mt-2 text-primary">Mes Publications</h1>
 
-        <v-btn
-          color="error"
-          :rules="passwordRules"
-          :disabled="!valid"
-          :loading="isLoadingDelete"
-          class="mr-4 mb-4"
-          @click="deleteAccompte()"
-        >
-          Supprimer
-        </v-btn>
-      </v-form>
-    </v-row>
-    <v-row>
-      <v-card>
-        <v-card-text> Mes Publications </v-card-text>
-      </v-card>
-    </v-row>
-
-    <div v-for="pub in this.Publications" :key="pub.id">
+    <div
+      v-for="pub in this.Publications"
+      :key="pub.id"
+      class="col-md-8 col-sm-12 publication-bloc"
+    >
       <v-card class="mx-auto mt-4" v-if="pub.UserId == paramsId">
         <v-card-text class="card">
           <div class="d-flex">
@@ -133,7 +89,7 @@
           </div>
           <div
             @click="$router.push(`/publication/${pub.id}`)"
-            class="content-publication"
+            class="content-publication shadow-none p-3 mb-5 bg-light rounded"
             title="click"
           >
             <v-card-text>
@@ -170,7 +126,8 @@
               </v-btn>
             </div>
           </v-card-actions>
-          <div class="commentaire">
+          <hr>
+          <div class="commentaire" v-if="pub.Comments.length >0">
             <small class="d-block">Toutes les commentaires ..</small>
             <div v-for="commentaire in pub.Comments" :key="commentaire.id">
               <div class="list-commentaire">
@@ -201,8 +158,8 @@
                 </div>
               </div>
             </div>
+             <hr />
           </div>
-          <hr />
 
           <div class="row">
             <div class="col">
@@ -236,7 +193,6 @@
 </template>
 <script>
 import LikeService from "../../service/like";
-import AuthService from "../../service/auth";
 import CommentaireService from "../../service/commentaire";
 export default {
   created() {
@@ -248,18 +204,11 @@ export default {
     show4: false,
     selection: 1,
     paramsId: null,
-    supprimerCompte: false,
+
     isLoadingPassword: false,
     passwordSupprimer: "",
     messageCommentaire: "",
     commentaireLoading: false,
-    isLoadingDelete: false,
-    passwordRules: [
-      (v) => !!v || "Le mot de passe est requis",
-      (v) =>
-        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/.test(v) ||
-        "doit contenir au moins 8 des caractères dont une majuscule, une minuscule et un chiffre",
-    ],
   }),
   computed: {
     UserId() {
@@ -346,35 +295,6 @@ export default {
         })
         .catch((error) => console.log(error.response.data.error));
     },
-    //supprimer le compte
-    deleteAccompte() {
-      this.validate();
-      //patientez jusqu'a que la function validate soit remplie
-      setTimeout(() => {
-        if (this.valid) {
-          this.isLoadingDelete = true;
-          let password = {
-            password: this.passwordSupprimer,
-          };
-          //récupérer l'identifiant utilisateur
-          let id = this.paramsId;
-          //supprimer l'utilisateur
-          return AuthService.deleteUserByAdmin(password, id)
-            .then(() => {
-              alert("Le compte est supprimé");
-              this.$router.push("/");
-            })
-            .catch((error) => {
-              this.deleteMessageError = error.response.data.error;
-            })
-            .finally(() => (this.isLoadingDelete = false));
-        }
-      }, 10);
-    },
-    //vérifier les champs 'input'
-    validate() {
-      this.$refs.form.validate();
-    },
   },
 
   name: "AppProfile",
@@ -397,18 +317,16 @@ a {
   width: 50px;
   height: 50px;
   border-radius: 50%;
+  border:4px solid blue
 }
 .create-pub {
   padding-top: 17px;
   border-radius: 50px;
   background: #f8f8f8;
 }
-.content-notification {
-  border-top: 2px solid rgb(206, 206, 206);
-}
+
 .content-publication {
   cursor: pointer;
-  border-top: 2px solid rgb(206, 206, 206);
   margin-top: 7px;
 }
 .content-publication:hover {
@@ -420,8 +338,8 @@ a {
   top: 25%;
   z-index: 110;
   background: white;
-  left: 25%;
-  width: 50%;
+  padding: 10%;
+  width: 90%;
   box-shadow: -9px 78px 3px 200px rgba(77, 77, 77, 0.75);
   -webkit-box-shadow: -9px 78px 3px 200px rgba(77, 77, 77, 0.75);
   -moz-box-shadow: -9px 78px 3px 200px rgba(77, 77, 77, 0.75);
@@ -508,6 +426,9 @@ a {
     font-weight: bold;
     left: 72px;
   }
+}
+.publication-bloc {
+  margin: 0 auto;
 }
 @media (min-width: 577px) {
   .list-commentaire {
