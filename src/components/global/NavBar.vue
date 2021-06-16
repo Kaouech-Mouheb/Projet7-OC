@@ -23,7 +23,10 @@
             <div v-for="publication in publications" :key="publication.id">
               <div
                 class="notification-hover"
-                @click="$router.push(`/publication/${publication.id}`), notification = false"
+                @click="
+                  $router.push(`/publication/${publication.id}`),
+                    (notification = false)
+                "
               >
                 <img
                   :src="
@@ -111,6 +114,20 @@
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item v-if="User.isAdmin">
+            <v-list-item-icon>
+              <v-icon>mdi-shield-account-outline</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title
+                @click="$router.push('/admin')"
+                class="nav-item"
+              >
+                Admin
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
@@ -127,15 +144,17 @@ export default {
     return {
       drawer: false,
       notification: false,
-     
     };
   },
   computed: {
+    publications() {
+      return this.$store.state.pub.publications;
+    },
     deconnexion() {
       return this.$store.state.auth.connected;
     },
-     publications() {
-      return this.$store.state.pub.publications;
+    User() {
+      return this.$store.state.auth.user;
     },
   },
 

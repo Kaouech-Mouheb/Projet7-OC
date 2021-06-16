@@ -55,7 +55,7 @@
               :src="pub.attachment"
             ></v-img>
           </div>
-          <v-card-actions class="content-notification">
+          <v-card-actions>
             <div class="commentaire-titre">
               <small class="commentaire-icon">
                 {{ pub.Comments.length }} (commentaires)
@@ -70,7 +70,7 @@
                   height="24px"
                   viewBox="0 0 24 24"
                   width="24px"
-                  fill="#646464"
+                  fill="#0000FF"
                 >
                   <path d="M0 0h24v24H0V0z" fill="none" />
                   <path
@@ -115,21 +115,10 @@
           <hr />
 
           <div class="row">
-            <div class="text-center col-md-2">
-              <img
-                :src="
-                  User.avatar || '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
-                "
-                alt=""
-                class="img-fluid avatar-commentaire"
-              />
-              <small class="text-capitalize d-block"
-                >{{ User.username }} {{ User.lastName }}</small
-              >
-            </div>
             <div class="col">
               <v-text-field
                 color="#5b25f5"
+                class="shadow-none p-3 mb-5 bg-light rounded"
                 append-outer-icon="mdi-send"
                 @click:append-outer="
                   sendCommentaire(
@@ -270,12 +259,9 @@ export default {
   border-radius: 50px;
   background: #f8f8f8;
 }
-.content-notification {
-  border-top: 2px solid rgb(206, 206, 206);
-}
+
 .content-publication {
   cursor: pointer;
-  border-top: 2px solid rgb(206, 206, 206);
   margin-top: 7px;
 }
 .content-publication:hover {
@@ -309,12 +295,12 @@ export default {
 }
 .list-commentaire {
   width: 100%;
-  padding: 2% 2% 0;
+  padding: 3% 2% 0;
   display: flex;
   color: black;
   padding: 5px;
   margin-bottom: 5px;
-  border-radius: 1em;
+  border-top: 2px solid rgb(208, 208, 208);
 }
 .commentaire {
   width: 100%;
@@ -335,6 +321,7 @@ export default {
   font-weight: bold;
   left: 82px;
 }
+
 
 @media (max-width: 576px) {
   .mx-auto {

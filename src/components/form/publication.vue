@@ -20,9 +20,9 @@
           required
         ></v-textarea>
         <v-file-input
-          label="Avatar"
+          label="GIF"
           placeholder="Ajouter une photo"
-          accept="image/png, image/jpeg, image/bmp"
+          accept="image/png, image/jpeg, image/bmp/, image/gif"
           :rules="[
             (value) =>
               !value ||

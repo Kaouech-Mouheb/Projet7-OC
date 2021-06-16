@@ -77,6 +77,25 @@ const routes = [{
       }
     }
   },
+  {
+    path: "/admin",
+    name: "Admin",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () =>
+      import( /* webpackChunkName: "about" */ "../components/account/Admin.vue"),
+    beforeEnter: (to, from, next) => {
+      // ...
+      if (JSON.parse(localStorage.getItem('token'))) {
+        next()
+      } else {
+        next({
+          path: '/login'
+        })
+      }
+    }
+  },
 
   {
     path: "/publication/:id",

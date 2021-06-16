@@ -160,7 +160,7 @@
                   height="24px"
                   viewBox="0 0 24 24"
                   width="24px"
-                  fill="#646464"
+                  fill="#0000FF"
                 >
                   <path d="M0 0h24v24H0V0z" fill="none" />
                   <path
@@ -205,22 +205,11 @@
           <hr />
 
           <div class="row">
-            <div class="text-center col-md-2">
-              <img
-                :src="
-                  User.avatar || '//ssl.gstatic.com/accounts/ui/avatar_2x.png'
-                "
-                alt=""
-                class="img-fluid avatar-commentaire"
-              />
-              <small class="text-capitalize d-block"
-                >{{ User.username }} {{ User.lastName }}</small
-              >
-            </div>
             <div class="col">
               <v-text-field
                 color="#5b25f5"
                 append-outer-icon="mdi-send"
+                class="shadow-none p-3 mb-5 bg-light rounded"
                 @click:append-outer="
                   sendCommentaire(
                     pub.id,
