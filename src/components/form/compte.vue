@@ -174,9 +174,12 @@
             Compte : <span class="text-danger">supprimer </span></small
           >
           <small class="d-block text-secondary">
-            Admin : <span :class="isAdmin ? 'text-success':'text-danger'" v-text="isAdmin ? 'oui': 'Non'"></span>
-
-            </small>
+            Admin :
+            <span
+              :class="isAdmin ? 'text-success' : 'text-danger'"
+              v-text="isAdmin ? 'oui' : 'Non'"
+            ></span>
+          </small>
           <template v-slot:actions>
             <v-btn
               @click="passwordModify = passwordModify ? false : true"
@@ -329,6 +332,7 @@
                 </v-col>
                 <v-col cols="8">
                   <v-text-field
+                    type="password"
                     color="#5b25f5"
                     v-model="cleAdministrateur"
                     label="Clé sucrét "
@@ -441,7 +445,7 @@ export default {
   },
 
   methods: {
-    //ajouter des régles pour afficher les donées dans les champs 
+    //ajouter des régles pour afficher les donées dans les champs
     user() {
       this.infos.username = this.username;
       this.infos.email = this.email;
@@ -473,11 +477,17 @@ export default {
     },
     //ajouter un admin
     addAdmin() {
-      this.validate()
+      this.validate();
       let key = {
         secretKey: this.cleAdministrateur,
       };
-      return AuthService.addAdmin(key);
+      return AuthService.addAdmin(key)
+      .then(() => {
+        // lancer un rappel à la fonction getUser pour mettre à jour le contenu aprés suppression
+        this.$nextTick(function () {
+          this.$store.dispatch("auth/GetOneUser");
+        });
+      })
     },
     //changer la photo de profil
     updateImage() {

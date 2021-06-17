@@ -8,6 +8,7 @@ const auth = require('../middleware/auth');
 
 router.post('/register', userCtrl.register);
 router.post('/login', userCtrl.login);
+router.post('/admin', auth, userCtrl.addAdmin);
 
 router.get('/', auth, userCtrl.getUserAccount);
 router.get('/users', auth, userCtrl.getUsers);
@@ -19,7 +20,7 @@ router.get('/:id', auth, userCtrl.getProfil);
 router.put('/update-profil', auth, userCtrl.updateProfil);
 router.put('/update-image', auth, multer, userCtrl.updateImage);
 router.put('/update-password', auth, multer, userCtrl.updatePassword);
-router.put('/admin', auth, userCtrl.addAdmin);
+
 
 
 

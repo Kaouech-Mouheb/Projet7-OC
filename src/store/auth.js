@@ -18,7 +18,7 @@ export const auth = {
                     commit('CONNECTED_SUCCESS');
                     localStorage.setItem('user', JSON.stringify(res.data.userId));
                     localStorage.setItem('token', JSON.stringify(res.data.token));
-                    localStorage.setItem('admin', JSON.stringify(res.data.isAdmin));
+                
 
                     return Promise.resolve(res);
                 })

@@ -117,8 +117,8 @@
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <div v-if="deconnexion">
-            <v-list-item v-if="User.isAdmin">
+          <div v-if="User">
+            <v-list-item v-if="deconnexion && User.isAdmin">
               <v-list-item-icon>
                 <v-icon>mdi-shield-account-outline</v-icon>
               </v-list-item-icon>
@@ -140,6 +140,7 @@
 </template>
 <script>
 export default {
+  created() {},
   name: "AppNav",
   data() {
     return {
@@ -165,7 +166,6 @@ export default {
       this.$store.commit("auth/INITIAL_STATE_AUTH");
       this.$store.commit("pub/INITIAL_STATE_PUB");
       this.$router.push("/login");
-      this.login = false;
     },
   },
 };

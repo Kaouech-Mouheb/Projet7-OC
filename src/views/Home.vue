@@ -103,18 +103,27 @@ export default {
     //récupérer les données de l'utilisateur
     this.$store
       .dispatch("auth/GetOneUser")
-      .then(() => {
+      .then((res) => {
         this.waiting = false;
         this.loadingPage = true;
+        if (res.data == null) {
+          alert("Ce compte n'existe plus !");
+          this.$store.dispatch("auth/Loggout");
+          this.$store.commit("auth/INITIAL_STATE_AUTH");
+          this.$store.commit("pub/INITIAL_STATE_PUB");
+          this.$router.push("/login");
+        }
       })
       .catch(() => {
         alert("Votre session est expirée !");
         this.waiting = true;
         this.loadingPage = false;
-        localStorage.removeItem("token");
-        return window.location.reload();
+        this.$store.dispatch("auth/Loggout");
+        this.$store.commit("auth/INITIAL_STATE_AUTH");
+        this.$store.commit("pub/INITIAL_STATE_PUB");
+        this.$router.push("/login");
       });
-      // récupérer toutes les publicaitons
+    // récupérer toutes les publicaitons
     this.$store
       .dispatch("pub/GetPublications")
       .then(() => {
@@ -158,13 +167,12 @@ export default {
   watch: {
     searchQuery() {
       if (this.isLoading) return;
-      
+
       this.isLoading = true;
       //récupérer les données de l 'api
       return AuthService.getUsers()
         .then((res) => {
           this.users = res.data;
-      
         })
         .catch((error) => (this.messageError = error.response.data.error))
         .finally(() => (this.isLoading = false));
@@ -184,7 +192,7 @@ export default {
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  border:4px solid blue
+  border: 4px solid blue;
 }
 a {
   color: grey !important;

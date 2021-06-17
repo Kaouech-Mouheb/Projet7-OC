@@ -75,6 +75,11 @@ export default {
         "doit contenir au moins 8 des caractères dont une majuscule, une minuscule et un chiffre",
     ],
   }),
+  computed: {
+    User() {
+      return this.$store.state.auth.user;
+    },
+  },
 
   methods: {
     validate() {
@@ -89,10 +94,7 @@ export default {
           this.$store
             .dispatch("auth/Login", user)
             .then(() => {
-              document.location.reload();
-            })
-            .then(() => {
-              this.$router.push("/");
+              window.location = "http://localhost:8080/";
             })
             .catch((error) => {
               this.loading = false;

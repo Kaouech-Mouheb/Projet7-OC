@@ -21,7 +21,7 @@
         Dashboard
       </h1>
       <hr />
-      <div class="col-md-3">
+      <div class="col-md-6 col-lg-3">
         <h3 class="h4 text-utilisateur">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -145,7 +145,7 @@
           <thead>
             <tr>
               <th scope="col">id</th>
-              <th scope="col">Nom d'utilisateur</th>
+              <th scope="col">Utilisateur</th>
               <th scope="col">Contenu</th>
               <th scope="col">Action</th>
             </tr>
@@ -196,9 +196,9 @@
           <thead>
             <tr>
               <th scope="col">id</th>
-              <th scope="col">Nom d'utilisateur</th>
+              <th scope="col">Utilisateur</th>
               <th scope="col">Contenu</th>
-              <th scope="col">Publication id</th>
+              <th scope="col" title="publication id">P.Id</th>
 
               <th scope="col">Action</th>
             </tr>
@@ -213,7 +213,7 @@
                 {{ commit.username }} {{ commit.lastName }}
               </td>
               <td class="text-secondary">{{ commit.comment }}</td>
-               <td class="text-secondary">{{ commit.PublicationId }}</td>
+              <td class="text-secondary">{{ commit.PublicationId }}</td>
               <td>
                 <v-btn
                   class="supprimer"
@@ -257,6 +257,9 @@ export default {
   computed: {
     publications() {
       return this.$store.state.pub.publications;
+    },
+    User() {
+      return this.$store.state.auth.user;
     },
   },
   methods: {
@@ -315,9 +318,13 @@ export default {
             password: this.passwordSupprimer,
           };
           let id = this.userId;
+
           //supprimer l'utilisateur
           return AuthService.deleteUserByAdmin(password, id)
             .then(() => {
+              if (this.User.id == id) {
+                this.$router.push("/");
+              }
               this.$nextTick(function () {
                 this.$store.dispatch("pub/GetPublications");
                 //récupérer les données de l 'api
