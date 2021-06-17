@@ -2,7 +2,7 @@
   <div class="nav-bar">
     <v-app-bar color="#5b25f5" dark>
       <v-app-bar-nav-icon
-        v-if="login"
+        v-if="deconnexion"
         @click.stop="drawer = !drawer"
       ></v-app-bar-nav-icon>
       <v-spacer></v-spacer>
@@ -117,22 +117,22 @@
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-         <div v-if="login">
+          <div v-if="deconnexion">
             <v-list-item v-if="User.isAdmin">
-            <v-list-item-icon>
-              <v-icon>mdi-shield-account-outline</v-icon>
-            </v-list-item-icon>
+              <v-list-item-icon>
+                <v-icon>mdi-shield-account-outline</v-icon>
+              </v-list-item-icon>
 
-            <v-list-item-content>
-              <v-list-item-title
-                @click="$router.push('/admin')"
-                class="nav-item"
-              >
-                Admin
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-         </div>
+              <v-list-item-content>
+                <v-list-item-title
+                  @click="$router.push('/admin')"
+                  class="nav-item"
+                >
+                  Admin
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </div>
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
@@ -140,17 +140,11 @@
 </template>
 <script>
 export default {
-  created() {
-    this.navItem();
-    this.isLogin();
-    console.log(this.deconnexion);
-  },
   name: "AppNav",
   data() {
     return {
       drawer: false,
       notification: false,
-      login: true,
     };
   },
   computed: {
@@ -172,26 +166,6 @@ export default {
       this.$store.commit("pub/INITIAL_STATE_PUB");
       this.$router.push("/login");
       this.login = false;
-    },
-    isLogin() {
-      if (
-        window.location.pathname == "/login" ||
-        window.location.pathname == "/register"
-      ) {
-        this.login = false;
-      } else {
-        this.login = true;
-      }
-    },
-    navItem() {
-      if (
-        window.location.pathname == "/login" ||
-        window.location.pathname == "/register"
-      ) {
-        this.$store.commit("auth/LOGGOUT");
-      } else {
-        this.$store.commit("auth/CONNECTED_SUCCESS");
-      }
     },
   },
 };

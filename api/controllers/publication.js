@@ -161,8 +161,10 @@ exports.deletePublication = (req, res, next) => {
         where: {
             id: req.params.id
         }
-    }).then(() => {
-        return db.Publication.destroy({
+    }).then(pub => {
+        //si la publication contient une photo
+        if(!pub.attachment){
+            return db.Publication.destroy({
                 where: {
                     id: req.params.id
                 }
@@ -174,9 +176,92 @@ exports.deletePublication = (req, res, next) => {
             }).catch(error => res.json({
                 error
             }))
+        }
+        //si non
+        const filename = pub.attachment.split('/images/')[1];
+        //suprimer le fichier du serveur
+        fs.unlink(`images/${filename}`, () => {
+            //modifier la publication en question 
+            db.Publication.destroy({
+                where: {
+                    id: req.params.id
+                }
+            }).then(() => {
+                return res.status(200).send({
+                    'message': 'publication supprimé'
+                })
+            }).catch(error => res.status(400).json({
+                error
+            }))
+        })
+       
     }).catch(error => res.json({
         error
     }))
 
+
+}
+//modifier la publication
+exports.modifyPublication = (req, res) => {
+    // récupérer les valeur envoyer par le backend
+    if (req.file) {
+        let publication = {
+            title: req.body.title,
+            content: req.body.content,
+            attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        }
+        //trouver la publication en question
+        models.Publication.findOne({
+            where: {
+                id: req.params.id
+            }
+        }).then(pub => {
+            //récupérer le nom du fichier 
+            const filename = pub.attachment.split('/images/')[1];
+            //suprimer le fichier du serveur
+            fs.unlink(`images/${filename}`, () => {
+                //modifier la publication en question 
+                models.Publication.update(publication, {
+                    where: {
+                        id: req.params.id
+                    }
+                }).then(() => {
+                    return res.status(200).send({
+                        'message': "Publication modifiée"
+                    })
+                }).catch(error => res.status(400).json({
+                    error
+                }))
+            })
+
+        }).catch(error => res.status(400).json({
+            error
+        }))
+    } else {
+        let publication = {
+            title: req.body.title,
+            content: req.body.content,
+        }
+        //trouver la publication en question
+        models.Publication.findOne({
+            where: {
+                id: req.params.id
+            }
+        }).then(() => {
+            //modifier la publication en question 
+            models.Publication.update(publication, {
+                where: {
+                    id: req.params.id
+                }
+
+            }).then(() => {
+                return res.status(200).send({
+                    'message': "Publication modifiée"
+                })
+            })
+        }).catch(error => res.status(400).json({
+            error
+        }))
+    }
 
 }
