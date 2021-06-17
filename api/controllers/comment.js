@@ -3,7 +3,7 @@ const db = require('../models');
 const utils = require('../utils/jwt.utils');
 
 exports.comment = function (req, res) {
-    let id = utils.getUserId(req.headers.authorization);
+    const id = utils.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
     console.log(req.body.comment)
     db.Comment.findOne({
@@ -38,7 +38,7 @@ exports.comment = function (req, res) {
 
 }
 exports.deleteComment = function (req, res) {
-    let id = utils.getUserId(req.headers.authorization);
+    const id = utils.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
     console.log(req.body)
     db.Comment.findOne({

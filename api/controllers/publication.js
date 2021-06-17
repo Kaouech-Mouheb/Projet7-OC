@@ -7,10 +7,10 @@ const utils = require('../utils/jwt.utils');
 
 exports.createPublication = (req, res, next) => {
     //identifier le posteur de message
-    let id = utils.getUserId(req.headers.authorization);
+    const id = utils.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
 
-    let publication = {
+    const publication = {
         UserId: id,
         content: req.body.content,
         attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
@@ -49,10 +49,10 @@ exports.createPublication = (req, res, next) => {
 }
 exports.createPublicationText = (req, res, next) => {
     //identifier le posteur de message
-    let id = utils.getUserId(req.headers.authorization);
+    const id = utils.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
 
-    let publication = {
+    const publication = {
         UserId: id,
         content: req.body.content,
     };
@@ -89,7 +89,7 @@ exports.createPublicationText = (req, res, next) => {
         });
 }
 exports.getPublications = (req, res, next) => {
-    let id = utils.getUserId(req.headers.authorization);
+    const id = utils.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
 
     db.Publication.findAll({
@@ -124,9 +124,9 @@ exports.getPublications = (req, res, next) => {
         }));
 };
 exports.updatePublication = (req, res) => {
-    let id = utils.getUserId(req.headers.authorization);
+    const id = utils.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
-    let publication = {
+    const publication = {
         content: req.body.content,
     }
 
@@ -154,7 +154,7 @@ exports.updatePublication = (req, res) => {
 
 
 exports.deletePublication = (req, res, next) => {
-    let id = utils.getUserId(req.headers.authorization);
+    const id = utils.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
 
     db.Publication.findOne({
@@ -199,69 +199,5 @@ exports.deletePublication = (req, res, next) => {
         error
     }))
 
-
-}
-//modifier la publication
-exports.modifyPublication = (req, res) => {
-    // récupérer les valeur envoyer par le backend
-    if (req.file) {
-        let publication = {
-            title: req.body.title,
-            content: req.body.content,
-            attachment: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        }
-        //trouver la publication en question
-        models.Publication.findOne({
-            where: {
-                id: req.params.id
-            }
-        }).then(pub => {
-            //récupérer le nom du fichier 
-            const filename = pub.attachment.split('/images/')[1];
-            //suprimer le fichier du serveur
-            fs.unlink(`images/${filename}`, () => {
-                //modifier la publication en question 
-                models.Publication.update(publication, {
-                    where: {
-                        id: req.params.id
-                    }
-                }).then(() => {
-                    return res.status(200).send({
-                        'message': "Publication modifiée"
-                    })
-                }).catch(error => res.status(400).json({
-                    error
-                }))
-            })
-
-        }).catch(error => res.status(400).json({
-            error
-        }))
-    } else {
-        let publication = {
-            title: req.body.title,
-            content: req.body.content,
-        }
-        //trouver la publication en question
-        models.Publication.findOne({
-            where: {
-                id: req.params.id
-            }
-        }).then(() => {
-            //modifier la publication en question 
-            models.Publication.update(publication, {
-                where: {
-                    id: req.params.id
-                }
-
-            }).then(() => {
-                return res.status(200).send({
-                    'message': "Publication modifiée"
-                })
-            })
-        }).catch(error => res.status(400).json({
-            error
-        }))
-    }
 
 }

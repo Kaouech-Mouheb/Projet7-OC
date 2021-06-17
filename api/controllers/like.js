@@ -3,7 +3,7 @@ const db = require('../models');
 const utils = require('../utils/jwt.utils');
 
 exports.like = async function (req, res) {
-    let id = utils.getUserId(req.headers.authorization);
+    const id = utils.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
     db.Like.findOne({
             where: {
