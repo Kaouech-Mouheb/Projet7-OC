@@ -100,7 +100,7 @@ exports.login = (req, res, next) => {
 
 exports.getUserAccount = (req, res) => {
     //identification du demandeur
-    let id = utilsJwt.getUserId(req.headers.authorization);
+    const id = utilsJwt.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
     db.User.findOne({
 
@@ -117,7 +117,9 @@ exports.getUserAccount = (req, res) => {
 }
 
 exports.getUsers = (req, res) => {
-    //identification du demandeur
+       //identification du demandeur
+       const id = utilsJwt.getUserId(req.headers.authorization);
+       if (Number.isNaN(id)) return res.status(400).end();
     db.User.findAll({
             attributes: {
                 exclude: ["password"]
@@ -132,7 +134,7 @@ exports.getUsers = (req, res) => {
 
 exports.getProfil = (req, res) => {
     //identification du demandeur
-    let id = utilsJwt.getUserId(req.headers.authorization);
+    const id = utilsJwt.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
     db.User.findOne({
 
@@ -149,9 +151,9 @@ exports.getProfil = (req, res) => {
 }
 
 exports.updateProfil = (req, res) => {
-    let id = utilsJwt.getUserId(req.headers.authorization);
+    const id = utilsJwt.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
-    let profil = {
+    const profil = {
         email: req.body.email,
         username: req.body.username,
         lastName: req.body.lastName,
@@ -181,13 +183,13 @@ exports.updateProfil = (req, res) => {
         })
 }
 exports.addAdmin = (req, res) => {
-    let id = utilsJwt.getUserId(req.headers.authorization);
+    const id = utilsJwt.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
 
     if (req.body.secretKey !== process.env.SECRET_KEY_ADMIN) {
         res.status(401).json({ 'message' : 'veuillez entrer une clé secrét valable'});
     }
-    let admin = {
+    const admin = {
         isAdmin: true
     }
     db.User.findOne({
@@ -211,7 +213,7 @@ exports.addAdmin = (req, res) => {
         })
 }
 exports.updateImage = (req, res) => {
-    let id = utilsJwt.getUserId(req.headers.authorization);
+    const id = utilsJwt.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
 
     db.User.findOne({
@@ -238,7 +240,7 @@ exports.updateImage = (req, res) => {
 }
 
 exports.updatePassword = (req, res) => {
-    let id = utilsJwt.getUserId(req.headers.authorization);
+    const id = utilsJwt.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
 
     db.User.findOne({
@@ -282,7 +284,7 @@ exports.updatePassword = (req, res) => {
 }
 
 exports.deleteAccount = (req, res, next) => {
-    let id = utilsJwt.getUserId(req.headers.authorization);
+    const id = utilsJwt.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
     //comparer les mots de passe des utilisateur
     db.User.findOne({
@@ -316,7 +318,7 @@ exports.deleteAccount = (req, res, next) => {
     }))
 }
 exports.deleteAccountByAdmin = (req, res, next) => {
-    let id = utilsJwt.getUserId(req.headers.authorization);
+    const id = utilsJwt.getUserId(req.headers.authorization);
     if (Number.isNaN(id)) return res.status(400).end();
     //comparer les mots de passe des utilisateur
     db.User.findOne({
