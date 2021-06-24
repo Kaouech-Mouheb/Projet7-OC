@@ -82,6 +82,7 @@ export default {
   },
 
   methods: {
+    //Login
     validate() {
       this.$refs.form.validate();
       setTimeout(() => {

@@ -84,7 +84,7 @@
             flat
             label="Multimédia"
           ></v-switch>
-          <v-switch v-model="text" color="indigo" flat label="Forum"></v-switch>
+          <v-switch v-model="text" color="indigo" flat label="Text"></v-switch>
         </v-col>
       </div>
     </div>
