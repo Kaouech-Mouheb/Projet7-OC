@@ -276,7 +276,7 @@ export default {
         like = like + el.like;
       });
 
-      console.log(like);
+    
       return like;
     },
     //ajouter un commentaire

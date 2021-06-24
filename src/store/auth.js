@@ -44,7 +44,6 @@ export const auth = {
             return AuthService.getUserAccount()
                 .then(res => {
                     commit('USER_ACCOUNT', res.data);
-                    console.log(res.data)
                     return Promise.resolve(res)
                 })
                 .catch(error => {
@@ -57,7 +56,6 @@ export const auth = {
             return AuthService.getOneUser(id)
                 .then(res => {
                     commit('USER_PROFIL', res.data);
-                    console.log(res.data)
                     return Promise.resolve(res)
                 })
                 .catch(error => {
