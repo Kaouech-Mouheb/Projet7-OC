@@ -1,12 +1,16 @@
 <template>
   <div class="img">
     <v-container>
-      <div class="title-small-screen">
-        <h2 class="text-center">Groupomania</h2>
-      </div>
+      
       <v-row class="d-flex justify-center">
         <v-col cols="12" sm="6" class="card">
           <div class="text-center">
+            <img
+              width="150"
+              src="../../assets/icon-left-font-monochrome-black.png"
+              alt="Groupomania"
+            />
+
             <h2 class="inscription">Inscription</h2>
           </div>
           <v-form ref="form" v-model="valid" lazy-validation>
@@ -127,10 +131,10 @@ export default {
               this.messageSuccess = true;
             })
             .catch((error) => {
-               this.loading = false;
+              this.loading = false;
               this.messageError = error.response.data.error;
             })
-            .finally(() => this.loading = false)
+            .finally(() => (this.loading = false));
         }
       }, 10);
     },

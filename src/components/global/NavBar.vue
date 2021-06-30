@@ -8,7 +8,11 @@
       <v-spacer></v-spacer>
       <h2>
         <router-link to="/" class="title-groupomania">
-          Groupomania
+          <img
+            width="250"
+            src="../../assets/icon-left-font-monochrome-white.png"
+            alt="Groupomania"
+          />
         </router-link>
       </h2>
 
